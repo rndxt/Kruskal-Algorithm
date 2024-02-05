@@ -1,0 +1,5 @@
+namespace NSProject {
+
+void runAllTests();
+
+}
