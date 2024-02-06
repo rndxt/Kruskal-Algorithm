@@ -75,7 +75,7 @@ Graph Graph::getMST() const {
   }
 
   assert(MST.getCountEdges() == getCountVertex() - DSU.getCountSets()
-         && "MST always contain a N-1 edge (in connected graph)");
+         && "MST always contain a N-K edges (K = number connected components)");
   return MST;
 }
 
