@@ -6,7 +6,7 @@
 
 namespace NSProject {
 
-DisjointSet::DisjointSet(Index n) : CountSets_(n), Sets_(n) {
+DisjointSet::DisjointSet(Index n) : Sets_(n), CountSets_(n) {
   std::iota(Sets_.begin(), Sets_.end(), 0);
 }
 

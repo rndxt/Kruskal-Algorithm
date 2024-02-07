@@ -4,6 +4,7 @@
 #include <iostream>
 
 namespace NSProject {
+
 void react() {
   try {
     throw;
@@ -11,4 +12,5 @@ void react() {
     std::cout << e.what() << std::endl;
   }
 }
+
 } // namespace NSProject

@@ -1,3 +1,6 @@
+#ifndef TESTDISJOINTSET_H
+#define TESTDISJOINTSET_H
+
 namespace NSProject {
 
 namespace NSTestsDSU {
@@ -9,3 +12,5 @@ void testJoin();
 } // namespace NSTestsDSU
 
 } // namespace NSProject
+
+#endif // TESTDISJOINTSET_H
