@@ -16,10 +16,6 @@ void FieldModel::subscribe(ObserverField* obs) {
 }
 
 void FieldModel::makeMove(const ItemAction& action) {
-  qDebug() << "FieldModel::makeMove";
-  // if (!field_.has_value())
-  //   return;
-  // field_->moveItemTo(action.index, action.row, action.column);
   port_.notify();
 }
 

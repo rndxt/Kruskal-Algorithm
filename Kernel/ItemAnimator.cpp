@@ -46,11 +46,14 @@ void ItemAnimator::onTimer() {
     Graph::Edge e = sortedEdges_[step_];
     DrawEdge drawEdge = {e.v, e.w, QColorConstants::DarkGray};
 
+
     if (dsu_.findSet(e.u) != dsu_.findSet(e.v)) {
       dsu_.join(e.u, e.v);
       drawEdge.contur = QColor("orange");
     }
-    action_(e.u, drawEdge);
+
+    DrawData::DrawChangesTable changes = {{{e.u, dsu_.findSet(e.u)}, {e.v, dsu_.findSet(e.v)}}};
+    action_(e.u, drawEdge, changes);
     ++step_;
   }
 }

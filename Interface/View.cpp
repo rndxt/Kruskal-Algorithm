@@ -10,6 +10,7 @@
 #include <qwt_plot_shapeitem.h>
 #include <qwt_plot_marker.h>
 #include <qwt_text.h>
+#include <QHeaderView>
 
 #include <QDebug>
 
@@ -26,6 +27,7 @@ View::View()
       runButton_(std::make_unique<QPushButton>("Run")),
       slider_(std::make_unique<QSlider>(Qt::Orientation::Horizontal)),
       label_(std::make_unique<QLabel>("label")),
+      table_(std::make_unique<QTableWidget>()),
       picker_(new QwtPlotPicker(plot_->canvas())),
       in_port_([this](Data&& data) { drawData(std::move(data)); }) {
   assert(plot_);
@@ -43,6 +45,13 @@ View::View()
 
   vboxLayout_->addLayout(hboxLayout_.get());
   vboxLayout_->addWidget(plot());
+
+  table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  table_->horizontalHeader()->setVisible(false);
+  table_->setRowCount(2);
+  table_->setVerticalHeaderLabels({"Vertex", "index"});
+  table_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  vboxLayout_->addWidget(table_.get());
 }
 
 View::~View() = default;
@@ -113,8 +122,6 @@ void View::setPicker(QwtPlotPicker* picker) {
 }
 
 void View::drawData(Data&& data) {
-  qDebug() << "View:: drawData";
-  qDebug() << (data.has_value());
   if (data.has_value()) {
     draw(*data);
   } else {
@@ -128,6 +135,14 @@ void View::clear() {
 }
 
 void View::draw(const DrawData& data) {
+  table_->setColumnCount(size(data.table));
+  for (size_t column = 0; auto [vertex, up] : data.table) {
+    table_->setItem(0, column, new QTableWidgetItem(QString::number(vertex)));
+    table_->setItem(1, column, new QTableWidgetItem(QString::number(up)));
+    column += 1;
+  }
+  table_->resizeColumnsToContents();
+
   plot_->detachItems();
   for (auto& [id, node]: data.nodes) {
     drawNode(node);
@@ -148,8 +163,6 @@ void View::draw(const DrawData& data) {
 }
 
 void View::drawNode(const DrawNode& node) {
-  qDebug() << "node: " << node.id;
-
   std::unique_ptr<QwtPlotShapeItem> plot_item =
       std::make_unique<QwtPlotShapeItem>();
   QPainterPath path;
@@ -169,8 +182,6 @@ void View::drawNode(const DrawNode& node) {
 }
 
 void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdge& outEdge) {
-  qDebug() << "edge: " << first.id << " " << second.id;
-
   QPointF v = second.center - first.center;
   v /= std::sqrt(QPointF::dotProduct(v, v));
   QPointF p1 = first.center + first.radius * v;

@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QLabel>
+#include <QTableWidget>
 #include <qwt_plot.h>
 
 #include "Kernel/DrawData.h"
@@ -77,6 +78,7 @@ private:
   std::unique_ptr<QPushButton> runButton_;
   std::unique_ptr<QSlider> slider_;
   std::unique_ptr<QLabel> label_;
+  std::unique_ptr<QTableWidget> table_;
 
   QwtPlotPicker* picker_;
   ObserverState in_port_;

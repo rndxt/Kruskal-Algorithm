@@ -1,7 +1,5 @@
 #include "Graph.h"
 
-#include "DisjointSet.h"
-
 #include <algorithm>
 #include <iterator>
 #include <cassert>
@@ -12,7 +10,6 @@ namespace Kernel {
 Graph::Graph() {
   for (int i = 0; i < 6; ++i)
     addVertex(i);
-
 
   addEdge({0, 1, 19});
   addEdge({0, 2, 28});
@@ -36,8 +33,8 @@ Graph::Graph() {
 }
 
 void Graph::addEdge(Edge e) {
-  assert(AdjLists_.count(e.u) == 1);
-  assert(AdjLists_.count(e.v) == 1);
+  assert(AdjLists_.contains(e.u));
+  assert(AdjLists_.contains(e.v));
   auto p = adjacent(e.u).insert({e.v, e.w});
   if (p.second) {
     adjacent(e.v).insert({e.u, e.w});
@@ -46,8 +43,8 @@ void Graph::addEdge(Edge e) {
 }
 
 void Graph::removeEdge(Edge e) {
-  assert(AdjLists_.count(e.u) == 1);
-  assert(AdjLists_.count(e.v) == 1);
+  assert(AdjLists_.contains(e.u));
+  assert(AdjLists_.contains(e.v));
   AdjacentEdges &outEdgesU = adjacent(e.u);
   AdjacentEdges &outEdgesV = adjacent(e.v);
 
@@ -62,18 +59,18 @@ void Graph::removeEdge(Edge e) {
   }
 }
 
-void Graph::addVertex(VertexId u) {
-  assert(AdjLists_.count(u) == 0);
-  AdjLists_.emplace(u, AdjacentEdges{});
+void Graph::addVertex(VertexId vertexId) {
+  assert(!AdjLists_.contains(vertexId));
+  AdjLists_.emplace(vertexId, AdjacentEdges{});
 }
 
-void Graph::removeVertex(VertexId u) {
-  for (OutEdge e : adjacent(u)) {
-    AdjLists_[e.v].erase({u, e.w});
+void Graph::removeVertex(VertexId vertexId) {
+  for (OutEdge e : adjacent(vertexId)) {
+    AdjLists_[e.v].erase({vertexId, e.w});
   }
 
-  CountEdges_ -= adjacent(u).size();
-  AdjLists_.erase(u);
+  CountEdges_ -= adjacent(vertexId).size();
+  AdjLists_.erase(vertexId);
 }
 
 size_t Graph::getVerticesCount() const {
@@ -87,10 +84,10 @@ int Graph::getCountEdges() const {
 Graph::SortedEdges Graph::getSortedEdges() const {
   SortedEdges sortedEdges;
   for (const auto &[v, outEdges] : AdjLists_) {
-    auto st = outEdges.upper_bound({v, 0});
-    auto end = outEdges.end();
-    auto convertOutEdge = [&u = v](OutEdge e) { return Edge{u, e.v, e.w}; };
-    std::transform(st, end, std::back_inserter(sortedEdges), convertOutEdge);
+    std::transform(outEdges.upper_bound({v, 0}),
+                   end(outEdges),
+                   std::back_inserter(sortedEdges),
+                   [&u = v](OutEdge e) { return Edge{u, e.v, e.w}; });
   }
   std::ranges::sort(sortedEdges, {}, &Edge::w);
 
@@ -99,14 +96,14 @@ Graph::SortedEdges Graph::getSortedEdges() const {
   return sortedEdges;
 }
 
-Graph::AdjacentEdges &Graph::adjacent(VertexId v) {
-  assert(AdjLists_.count(v) == 1);
-  return AdjLists_.find(v)->second;
+Graph::AdjacentEdges &Graph::adjacent(VertexId vertexId) {
+  assert(AdjLists_.contains(vertexId));
+  return AdjLists_.find(vertexId)->second;
 }
 
-const Graph::AdjacentEdges &Graph::adjacent(VertexId v) const {
-  assert(AdjLists_.count(v) == 1);
-  return AdjLists_.find(v)->second;
+const Graph::AdjacentEdges &Graph::adjacent(VertexId vertexId) const {
+  assert(AdjLists_.contains(vertexId));
+  return AdjLists_.find(vertexId)->second;
 }
 
 } // namespace Kernel

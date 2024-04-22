@@ -39,7 +39,9 @@ private:
   void onMousePress_(const QPointF& position);
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
-  void onActiveAnimation_(int, const DrawData::DrawEdge&);
+  void onActiveAnimation_(int vertexId,
+                          const DrawData::DrawEdge& drawEdge,
+                          const DrawData::DrawChangesTable& drawChanges);
   void onFieldData(GraphData&& data);
 
   int touchedItem_(const QPointF& position) const;

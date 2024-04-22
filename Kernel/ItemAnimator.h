@@ -17,7 +17,8 @@ class ItemAnimator : public QObject {
   Q_OBJECT
 
   using DrawEdge = DrawData::DrawEdge;
-  using Action = std::function<void(int, const DrawEdge&)>;
+  using DrawChangesTable = DrawData::DrawChangesTable;
+  using Action = std::function<void(int, const DrawEdge&, const DrawData::DrawChangesTable&)>;
 
 public:
   ItemAnimator(Action f);

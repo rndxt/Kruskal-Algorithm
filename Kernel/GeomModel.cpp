@@ -10,30 +10,25 @@ namespace QApp {
 namespace Kernel {
 
 GeomModel::GeomModel()
-    : active_animator_([this](int vertexId, const DrawData::DrawEdge& edge) { onActiveAnimation_(vertexId, edge); }),
+    : active_animator_([this](int vertexId, const DrawData::DrawEdge& edge, const DrawData::DrawChangesTable& changes) { onActiveAnimation_(vertexId, edge, changes); }),
       in_port_([this](GraphData&& data) { onFieldData(std::move(data)); }) {
-  qDebug() << "Constructor GeomModel";
 }
 
 GeomModel::ObserverField* GeomModel::port() {
-  qDebug() << "GeomModel::port";
   return &in_port_;
 }
 
 void GeomModel::subscribeToDrawData(Observer* obs) {
-  qDebug() << "GeomModel::subscribeToDrawData";
   assert(obs);
   port_.subscribe(obs);
 }
 
 void GeomModel::subscribeToItemAction(ObserverAction* obs) {
-  qDebug() << "GeomModel::subscribeToItemAction";
   assert(obs);
   action_port_.subscribe(obs);
 }
 
 void GeomModel::handleMouseAction(const MouseAction& action) {
-  qDebug() << "GeomModel::handleMouseAction";
   if (!data_.has_value())
     return;
   QPointF local_position = action.position;
@@ -54,7 +49,6 @@ void GeomModel::handleMouseAction(const MouseAction& action) {
 }
 
 void GeomModel::handleButtonAction(const ButtonAction& action) {
-  qDebug() << "GeomModel::handleButtonAction";
   if (!data_.has_value())
     return;
 
@@ -72,7 +66,6 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
 }
 
 void GeomModel::onMousePress_(const QPointF& position) {
-  qDebug() << "GeomModel::onMousePress_";
   assert(data_.has_value());
 
   int vertexId = touchedItem_(position);
@@ -86,7 +79,6 @@ void GeomModel::onMousePress_(const QPointF& position) {
 }
 
 void GeomModel::onMouseMove_(const QPointF& position) {
-  qDebug() << "GeomModel::onMouseMove_";
   assert(data_.has_value());
   if (active_index_ == k_non)
     return;
@@ -96,7 +88,6 @@ void GeomModel::onMouseMove_(const QPointF& position) {
 }
 
 void GeomModel::onMouseRelease_(const QPointF& position) {
-  qDebug() << "GeomModel::onMouseRelease_";
   assert(data_.has_value());
   if (active_index_ == k_non)
     return;
@@ -107,9 +98,14 @@ void GeomModel::onMouseRelease_(const QPointF& position) {
   active_index_ = k_non;
 }
 
-void GeomModel::onActiveAnimation_(int vertexId, const DrawData::DrawEdge& drawEdge) {
+void GeomModel::onActiveAnimation_(int vertexId,
+                                   const DrawData::DrawEdge& drawEdge,
+                                   const DrawData::DrawChangesTable& drawTable) {
   assert(data_.has_value());
   assert(data_->nodes.contains(vertexId));
+  for (auto [vertex, index] : drawTable) {
+    data_->table[vertex] = index;
+  }
 
   data_->nodes[vertexId].contur = QColor("orange");
   data_->nodes[drawEdge.vertexId].contur = QColor("orange");
@@ -130,13 +126,16 @@ void GeomModel::onFieldData(GraphData&& data) {
     return;
   }
 
-  qDebug() << "GraphGeomModel::onGraph";
   if (!data_.has_value())
     data_.emplace();
 
   graph_ = *data;
   size_t countVertices = graph_.getVerticesCount();
-  qDebug() << "countVertices:" << countVertices;
+
+  for (int i = 0; i < countVertices; ++i) {
+    data_->table.insert({i, i});
+  }
+
   double xc = 400.;
   double yc = 300.;
   double R = 100;
