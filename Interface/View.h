@@ -52,7 +52,11 @@ public:
   void subscribeRunButton(ObserverButton* obs);
 
   QwtPlot* plot();
-  QVBoxLayout* layout();
+  QPushButton* editButton();
+  QPushButton* runButton();
+  QSlider* slider();
+  QLabel* label();
+  QTableWidget* table();
 
 private Q_SLOTS:
   void onRunButtonClicked();
@@ -72,8 +76,6 @@ private:
   void drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdge& outEdge);
   
   std::unique_ptr<QwtPlot> plot_;
-  std::unique_ptr<QVBoxLayout> vboxLayout_;
-  std::unique_ptr<QHBoxLayout> hboxLayout_;
   std::unique_ptr<QPushButton> editButton_;
   std::unique_ptr<QPushButton> runButton_;
   std::unique_ptr<QSlider> slider_;

@@ -21,8 +21,6 @@ namespace Interface {
 
 View::View()
     : plot_(std::make_unique<QwtPlot>()),
-      vboxLayout_(std::make_unique<QVBoxLayout>()),
-      hboxLayout_(std::make_unique<QHBoxLayout>()),
       editButton_(std::make_unique<QPushButton>("Edit graph")),
       runButton_(std::make_unique<QPushButton>("Run")),
       slider_(std::make_unique<QSlider>(Qt::Orientation::Horizontal)),
@@ -34,24 +32,14 @@ View::View()
   adjustPlot(plot_.get());
   setPicker(picker_);
 
-  hboxLayout_->addWidget(editButton_.get(), 0, Qt::AlignLeft);
   QObject::connect(editButton_.get(), &QPushButton::clicked, this, &View::onEditButtonClicked);
-
-  hboxLayout_->addWidget(runButton_.get(), 1, Qt::AlignLeft);
   QObject::connect(runButton_.get(), &QPushButton::clicked, this, &View::onRunButtonClicked);
-
-  hboxLayout_->addWidget(slider_.get(), 2, Qt::AlignLeft);
-  hboxLayout_->addWidget(label_.get(), 3, Qt::AlignRight);
-
-  vboxLayout_->addLayout(hboxLayout_.get());
-  vboxLayout_->addWidget(plot());
 
   table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
   table_->horizontalHeader()->setVisible(false);
   table_->setRowCount(2);
   table_->setVerticalHeaderLabels({"Vertex", "index"});
   table_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-  vboxLayout_->addWidget(table_.get());
 }
 
 View::~View() = default;
@@ -74,8 +62,24 @@ QwtPlot* View::plot() {
   return plot_.get();
 }
 
-QVBoxLayout* View::layout() {
-  return vboxLayout_.get();
+QPushButton* View::editButton() {
+  return editButton_.get();
+}
+
+QPushButton* View::runButton() {
+  return runButton_.get();
+}
+
+QSlider* View::slider() {
+  return slider_.get();
+}
+
+QLabel* View::label() {
+  return label_.get();
+}
+
+QTableWidget* View::table() {
+  return table_.get();
 }
 
 void View::mousePressed(const QPointF& pos) {

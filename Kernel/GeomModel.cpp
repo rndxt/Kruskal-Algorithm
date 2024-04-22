@@ -31,6 +31,7 @@ void GeomModel::subscribeToItemAction(ObserverAction* obs) {
 void GeomModel::handleMouseAction(const MouseAction& action) {
   if (!data_.has_value())
     return;
+
   QPointF local_position = action.position;
   switch (action.status) {
   case EMouseStatus::Pressed:
@@ -53,10 +54,10 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
     return;
 
   switch (action.status) {
-  case QApp::Kernel::EButtonStatus::RunAnimation:
+  case EButtonStatus::RunAnimation:
     active_animator_.startAnimation(graph_);
     break;
-  case QApp::Kernel::EButtonStatus::PauseAnimation:
+  case EButtonStatus::PauseAnimation:
     active_animator_.pauseAnimation();
     break;
   default:
@@ -139,12 +140,12 @@ void GeomModel::onFieldData(GraphData&& data) {
   double xc = 400.;
   double yc = 300.;
   double R = 100;
-  int i = 0;
-  for (auto vertex : std::views::keys(graph_.AdjLists_)) {
+  auto v = graph_.AdjLists_ | std::views::keys | std::views::enumerate;
+  for (auto [i, vertex] : v) {
     double angle = 2 * std::numbers::pi * i / countVertices;
     QPointF center = {xc + R * std::cos(angle), yc + R * std::sin(angle)};
-    i += 1;
-    data_->nodes.insert({vertex, DrawData::DrawNode{center, 10, Qt::black, vertex}});
+    data_->nodes.emplace(vertex,
+                         DrawData::DrawNode{center, 10, Qt::black, vertex});
   }
 
   for (const auto &[vertex, outEdges] : graph_.AdjLists_) {
@@ -155,15 +156,18 @@ void GeomModel::onFieldData(GraphData&& data) {
   port_.notify();
 }
 
-int GeomModel::touchedItem_(const QPointF& position) const {
+int GeomModel::touchedItem_(const QPointF &position) const {
   assert(data_.has_value());
-  for (const auto &drawNode : std::views::values(data_->nodes)) {
+  auto v = std::views::values(data_->nodes);
+  auto it = std::ranges::find_if(v, [position](const auto &drawNode) {
     QPointF diff = drawNode.center - position;
-    if (std::sqrt(QPointF::dotProduct(diff, diff)) < drawNode.radius) {
-      return drawNode.id;
-    }
-  }
-  return k_non;
+    return std::sqrt(QPointF::dotProduct(diff, diff)) < drawNode.radius;
+  });
+
+  if (it == end(v))
+    return k_non;
+
+  return (*it).id;
 }
 
 } // namespace Kernel
