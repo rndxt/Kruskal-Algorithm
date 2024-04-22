@@ -27,7 +27,7 @@ class Field {
   using FieldItems = std::vector<FieldItem>;
 
 public:
-  Field();
+  Fie();
 
   int rows() const;
   int columns() const;

@@ -9,11 +9,19 @@
 namespace QApp {
 namespace Kernel {
 
-Graph::Graph(int countVertices) {
-  AdjLists_.reserve(countVertices);
-  for (int i = 0; i < countVertices; ++i) {
-    AdjLists_.emplace(i, AdjacentEdges{});
-  }
+Graph::Graph() {
+  for (int i = 0; i < 8; ++i)
+    addVertex(i);
+
+  addEdge({0, 1, 5});
+  addEdge({0, 2, 8});
+  addEdge({0, 3, 1});
+  addEdge({1, 5, 4});
+  addEdge({2, 4, 5});
+  addEdge({3, 5, 4});
+  addEdge({3, 7, 5});
+  addEdge({5, 6, 3});
+  addEdge({5, 7, 3});
 }
 
 void Graph::addEdge(Edge e) {
@@ -57,27 +65,30 @@ void Graph::removeVertex(VertexId u) {
   AdjLists_.erase(u);
 }
 
-Graph Graph::getMST() const {
-  int CountVertices = getVerticesCount();
-  Graph MST(CountVertices);
+// Graph Graph::getMST() const {
+//   int CountVertices = getVerticesCount();
+//   Graph MST();
+//   for (int i = 0; i < CountVertices; ++i) {
 
-  DisjointSet DSU;
-  for (const auto &[u, outEdge] : AdjLists_) {
-    DSU.makeSet(u);
-  }
+//   }
 
-  SortedEdges sortedEdges = getSortedEdges();
-  for (Edge e : sortedEdges) {
-    if (DSU.findSet(e.u) != DSU.findSet(e.v)) {
-      MST.addEdge(e);
-      DSU.join(e.u, e.v);
-    }
-  }
+//   DisjointSet DSU;
+//   for (const auto &[u, outEdge] : AdjLists_) {
+//     DSU.makeSet(u);
+//   }
 
-  assert(MST.getCountEdges() == getVerticesCount() - DSU.getCountSets()
-         && "MST always contain a N-K edges (K = number connected components)");
-  return MST;
-}
+//   SortedEdges sortedEdges = getSortedEdges();
+//   for (Edge e : sortedEdges) {
+//     if (DSU.findSet(e.u) != DSU.findSet(e.v)) {
+//       MST.addEdge(e);
+//       DSU.join(e.u, e.v);
+//     }
+//   }
+
+//   assert(MST.getCountEdges() == getVerticesCount() - DSU.getCountSets()
+//          && "MST always contain a N-K edges (K = number connected components)");
+//   return MST;
+// }
 
 size_t Graph::getVerticesCount() const {
   return AdjLists_.size();

@@ -2,33 +2,21 @@
 
 #include <QPainterPath>
 #include <QPen>
+#include <QFont>
 #include <qwt_picker_machine.h>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_picker.h>
 #include <qwt_plot_shapeitem.h>
+#include <qwt_plot_marker.h>
+#include <qwt_text.h>
+
+#include <QDebug>
 
 #include <cassert>
 
 namespace QApp {
 namespace Interface {
-
-namespace {
-
-class SeriesQPointF : public QwtArraySeriesData<QPointF> {
-public:
-  SeriesQPointF(const QPointF& corner1, const QPointF& corner2)
-      : rectangle_(corner1, corner2) {
-  }
-  QRectF boundingRect() const override {
-    return rectangle_;
-  }
-
-private:
-  QRectF rectangle_;
-};
-
-} // namespace
 
 View::View()
     : plot_(std::make_unique<QwtPlot>()),
@@ -82,6 +70,8 @@ void View::setPicker(QwtPlotPicker* picker) {
 }
 
 void View::drawData(Data&& data) {
+  qDebug() << "View:: drawData";
+  qDebug() << (data.has_value());
   if (data.has_value()) {
     draw(*data);
   } else {
@@ -96,88 +86,77 @@ void View::clear() {
 
 void View::draw(const DrawData& data) {
   plot_->detachItems();
-  drawField(data.field);
-  for (const auto& item : data.items)
-    addItem(item, data.field.origin);
+  for (auto& [id, node]: data.nodes) {
+    drawNode(node);
+  }
+
+  for (auto& [id, outEdges] : data.edges) {
+    assert(std::ranges::is_sorted(outEdges, {}, &DrawEdge::vertexId));
+    auto it = std::ranges::lower_bound(outEdges, id, {}, &DrawEdge::vertexId);
+    auto v = std::ranges::subrange(it, end(outEdges));
+    for (auto &outEdge : v) {
+      assert(data.nodes.contains(id));
+      assert(data.nodes.contains(outEdge.vertexId));
+      drawEdge(data.nodes.find(outEdge.vertexId)->second,
+               data.nodes.find(id)->second, outEdge);
+    }
+  }
   plot_->replot();
 }
 
-void View::addItem(const ItemOnField& item, const QPointF& field_origin) {
+void View::drawNode(const DrawNode& node) {
+  qDebug() << "node: " << node.id;
+
   std::unique_ptr<QwtPlotShapeItem> plot_item =
       std::make_unique<QwtPlotShapeItem>();
   QPainterPath path;
-  path.addEllipse(item.center + field_origin, item.radius, item.radius);
+  path.addEllipse(node.center, node.radius, node.radius);
   plot_item->setShape(path);
-  plot_item->setPen(QPen(item.countur));
-  plot_item->setBrush(QBrush(item.fill));
+  plot_item->setPen(QPen(node.contur, 2));
   plot_item.release()->attach(plot_.get());
+
+  std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
+  marker->setValue(node.center);
+  QwtText label = QwtText(QString::number(node.id));
+  QFont font = label.font();
+  font.setPixelSize(22);
+  label.setFont(font);
+  marker->setLabel(label);
+  marker.release()->attach(plot_.get());
 }
 
-void View::drawField(const FieldData& field) {
-  plot_->setAxisScale(QwtAxis::YLeft, field.origin.y() - field.hight,
-                      field.origin.y() + (field.rows + 1) * field.hight, 1);
-  plot_->setAxisScale(QwtAxis::XBottom, field.origin.x() - field.width,
-                      field.origin.x() + (field.columns + 1) * field.width, 1);
-  drawVerticalLines(field);
-  drawHorizontalLines(field);
+void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdge& outEdge) {
+  qDebug() << "edge: " << first.id << " " << second.id;
+
+  QPointF v = second.center - first.center;
+  v /= std::sqrt(QPointF::dotProduct(v, v));
+  QPointF p1 = first.center + first.radius * v;
+  QPointF p2 = second.center - second.radius * v;
+
+  std::unique_ptr<QwtPlotShapeItem> plot_item =
+      std::make_unique<QwtPlotShapeItem>();
+  QPainterPath path;
+  path.moveTo(p1);
+  path.lineTo(p2);
+  plot_item->setShape(path);
+  plot_item->setPen(QPen(outEdge.contur, 2));
+  plot_item.release()->attach(plot_.get());
+
+  QPointF k = v;
+  k.ry() *= -1.;
+  k = k.transposed();
+  k /= std::sqrt(QPointF::dotProduct(k, k));
+  QPointF labelPos = (p1 + p2) / 2 + 5 * k;
+
+  std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
+  marker->setValue(labelPos);
+  QwtText label = QwtText(QString::number(outEdge.w));
+  QFont font = label.font();
+  font.setPixelSize(22);
+  label.setFont(font);
+  marker->setLabel(label);
+  marker.release()->attach(plot_.get());
 }
 
-QVector<QPointF> View::makeVerticalPath(const FieldData& field) {
-  QPointF point = field.origin;
-  QPointF vertical = QPointF(0., field.rows * field.hight);
-  QPointF horizontal = QPointF(field.width, 0.);
-  QVector<QPointF> path;
-  path.push_back(point);
-  for (int index = 0; index < field.columns; ++index) {
-    point += vertical;
-    path.push_back(point);
-    point += horizontal;
-    path.push_back(point);
-    vertical *= -1;
-  }
-  point += vertical;
-  path.push_back(point);
-  return path;
-}
-
-QVector<QPointF> View::makeHorizontalPath(const FieldData& field) {
-  QPointF point = field.origin;
-  QPointF vertical = QPointF(0., field.hight);
-  QPointF horizontal = QPointF(field.columns * field.width, 0.);
-  QVector<QPointF> path;
-  path.push_back(point);
-  for (int index = 0; index < field.rows; ++index) {
-    point += horizontal;
-    path.push_back(point);
-    point += vertical;
-    path.push_back(point);
-    horizontal *= -1;
-  }
-  point += horizontal;
-  path.push_back(point);
-  return path;
-}
-
-void View::addPathToPlot(const FieldData& field, QVector<QPointF>&& path) {
-  std::unique_ptr<QwtPlotCurve> curve = std::make_unique<QwtPlotCurve>();
-  QPointF origin = field.origin;
-  QPointF corner = origin;
-  corner += QPointF(field.columns * field.width, field.rows * field.hight);
-  std::unique_ptr<SeriesQPointF> points =
-      std::make_unique<SeriesQPointF>(origin, corner);
-  points->setSamples(path);
-  curve->setSamples(points.release());
-  curve.release()->attach(plot_.get());
-}
-
-void View::drawVerticalLines(const FieldData& field) {
-  QVector<QPointF> path = makeVerticalPath(field);
-  addPathToPlot(field, std::move(path));
-}
-
-void View::drawHorizontalLines(const FieldData& field) {
-  QVector<QPointF> path = makeHorizontalPath(field);
-  addPathToPlot(field, std::move(path));
-}
 } // namespace Interface
 } // namespace QApp

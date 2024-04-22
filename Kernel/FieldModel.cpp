@@ -1,5 +1,7 @@
 #include "FieldModel.h"
 
+#include <QDebug>
+
 #include <cassert>
 
 namespace QApp {
@@ -14,9 +16,10 @@ void FieldModel::subscribe(ObserverField* obs) {
 }
 
 void FieldModel::makeMove(const ItemAction& action) {
-  if (!field_.has_value())
-    return;
-  field_->moveItemTo(action.index, action.row, action.column);
+  qDebug() << "FieldModel::makeMove";
+  // if (!field_.has_value())
+  //   return;
+  // field_->moveItemTo(action.index, action.row, action.column);
   port_.notify();
 }
 

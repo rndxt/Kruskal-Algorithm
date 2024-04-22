@@ -32,7 +32,7 @@ struct Palette {
 
 private:
   std::array<QColor, ItemStatusF::size()> fill_ = {Qt::red, Qt::green};
-  std::array<QColor, ItemStatusF::size()> countur_ = {Qt::black, Qt::black};
+  std::array<QColor, ItemStatusF::size()> countur_ = {Qt::black, Qt::gray};
 };
 
 } // namespace Kernel

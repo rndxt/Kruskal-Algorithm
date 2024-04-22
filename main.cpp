@@ -1,11 +1,14 @@
-#include "except.h"
-#include "test.h"
+#include "Application.h"
+#include "Except.h"
+#include "QRunTime.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+  QApp::QRunTime runtime(argc, argv);
   try {
-    NSProject::runAllTests();
+    QApp::Application app;
+    runtime.exec();
   } catch (...) {
-    NSProject::react();
+    QApp::Except::react();
   }
   return 0;
 }

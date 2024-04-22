@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Field.h"
+#include "Graph.h"
 #include "ItemAction.h"
 #include "QObserver.h"
 
@@ -10,7 +10,7 @@ namespace QApp {
 namespace Kernel {
 
 class FieldModel {
-  using FieldData = std::optional<Field>;
+  using FieldData = std::optional<Graph>;
   using ObservableField = Library::CObservable<FieldData>;
   using ObserverField = Library::CObserver<FieldData>;
 

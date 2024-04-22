@@ -1,16 +1,19 @@
-#include "except.h"
+#include "Except.h"
+
+#include <QDebug>
 
 #include <exception>
-#include <iostream>
 
-namespace NSProject {
-
-void react() {
+namespace QApp {
+namespace Except {
+void react() noexcept {
   try {
     throw;
-  } catch (std::exception &e) {
-    std::cout << e.what() << std::endl;
+  } catch (std::exception& e) {
+    qDebug() << "Exception: " << e.what();
+  } catch (...) {
+    qDebug() << "Enknown Exception!";
   }
 }
-
-} // namespace NSProject
+} // namespace Except
+} // namespace QApp

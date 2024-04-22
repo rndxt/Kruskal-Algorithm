@@ -20,8 +20,7 @@ public:
     }
   };
 
-  Graph() = default;
-  explicit Graph(int countVertices);
+  Graph();
 
   void addEdge(Edge e);
   void removeEdge(Edge e);
@@ -29,7 +28,7 @@ public:
   void addVertex(VertexId u);
   void removeVertex(VertexId u);
 
-  Graph getMST() const;
+  // Graph getMST() const;
 
   size_t getVerticesCount() const;
   int getCountEdges() const;

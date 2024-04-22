@@ -13,7 +13,6 @@ public:
 
 private:
   PlotController controller_;
-  PlotController controller2_;
 };
 
 } // namespace QApp

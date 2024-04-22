@@ -113,15 +113,11 @@ SOURCES += \
   Interface/MainWindow.cpp \
   Interface/PlotController.cpp \
   Interface/View.cpp \
-  Interface/GraphView.cpp \
   Kernel/Graph.cpp \
   Kernel/DisjointSet.cpp \
-  Kernel/GraphGeomModel.cpp \
-  Kernel/Field.cpp \
   Kernel/FieldController.cpp \
   Kernel/FieldModel.cpp \
   Kernel/GeomModel.cpp \
-  Kernel/ItemAnimator.cpp \
   Kernel/Palette.cpp \
   Library/QTimeAnchor.cpp \
   Library/Random.cpp \
@@ -140,17 +136,12 @@ HEADERS += \
   Interface/MainWindow.h \
   Interface/PlotController.h \
   Interface/View.h \
-  Interface/GraphView.h \
   Kernel/DrawData.h \
   Kernel/Graph.h \
   Kernel/DisjointSet.h \
-  Kernel/GraphGeomModel.h \
-  Kernel/Field.h \
   Kernel/FieldController.h \
   Kernel/FieldModel.h \
   Kernel/GeomModel.h \
-  Kernel/ItemAction.h \
-  Kernel/ItemAnimator.h \
   Kernel/MouseAction.h \
   Kernel/Palette.h \
   Library/QTimeAnchor.h \

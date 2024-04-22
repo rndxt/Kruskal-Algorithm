@@ -7,8 +7,6 @@
 #include <QLabel>
 #include <qwt_plot.h>
 
-#include <QTableWidget>
-
 namespace QApp {
 namespace Interface {
 
@@ -35,14 +33,7 @@ View* MainWindow::view() {
   return &view_;
 }
 
-View* MainWindow::viewg() {
-  return &viewg_;
-}
-
-View* MainWindow::view2() {
-  return &view2_;
-}
-
 MainWindow::~MainWindow() = default;
+
 } // namespace Interface
 } // namespace QApp

@@ -16,7 +16,7 @@ class ItemAnimator : public QObject {
   using Action = std::function<void(const Item&)>;
 
 public:
-  ItemAnimator(Action f);
+  ItemAnimator(Action f)
   ItemAnimator(const ItemAnimator&) = delete;
   ItemAnimator(ItemAnimator&&) noexcept = delete;
   ItemAnimator& operator=(const ItemAnimator&) = delete;

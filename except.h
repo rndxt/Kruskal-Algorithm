@@ -1,10 +1,8 @@
-#ifndef EXCEPT_H
-#define EXCEPT_H
+#pragma once
 
-namespace NSProject {
+namespace QApp {
+namespace Except {
 
-void react();
-
-}
-
-#endif
+void react() noexcept;
+};
+} // namespace QApp

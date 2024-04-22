@@ -23,14 +23,10 @@ public:
   ~MainWindow();
 
   View* view();
-  View* viewg();
-  View* view2();
 
 private:
   std::unique_ptr<Ui::MainWindow> ui_;
   View view_;
-  View viewg_;
-  View view2_;
 };
 } // namespace Interface
 } // namespace QApp
