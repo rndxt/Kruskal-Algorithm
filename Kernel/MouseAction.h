@@ -12,7 +12,7 @@ struct MouseAction {
   QPointF position;
 };
 
-enum class EButtonStatus { Clicked };
+enum class EButtonStatus { RunAnimation, PauseAnimation };
 
 struct ButtonAction {
   EButtonStatus status;

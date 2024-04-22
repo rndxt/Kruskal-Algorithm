@@ -15,16 +15,23 @@ ItemAnimator::ItemAnimator(Action f) : action_(std::move(f)) {
 
 void ItemAnimator::startAnimation(const Graph& graph) {
   graph_ = graph;
-  active_ = true;
-  step_ = 0;
-  using namespace std::chrono;
-  timer_.start(500ms);
+  if (!active_) {
+    active_ = true;
+    step_ = 0;
+    for (const auto &[u, outEdge] : graph_.AdjLists_) {
+      dsu_.makeSet(u);
+    }
 
-  for (const auto &[u, outEdge] : graph_.AdjLists_) {
-    dsu_.makeSet(u);
+    sortedEdges_ = graph_.getSortedEdges();
   }
 
-  sortedEdges_ = graph_.getSortedEdges();
+  using namespace std::chrono;
+  timer_.start(1000ms);
+}
+
+void ItemAnimator::pauseAnimation() {
+  assert(active_);
+  timer_.stop();
 }
 
 void ItemAnimator::stopAnimation() {

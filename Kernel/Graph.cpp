@@ -10,18 +10,29 @@ namespace QApp {
 namespace Kernel {
 
 Graph::Graph() {
-  for (int i = 0; i < 8; ++i)
+  for (int i = 0; i < 6; ++i)
     addVertex(i);
 
-  addEdge({0, 1, 5});
-  addEdge({0, 2, 8});
-  addEdge({0, 3, 1});
-  addEdge({1, 5, 4});
-  addEdge({2, 4, 5});
-  addEdge({3, 5, 4});
-  addEdge({3, 7, 5});
-  addEdge({5, 6, 3});
-  addEdge({5, 7, 3});
+
+  addEdge({0, 1, 19});
+  addEdge({0, 2, 28});
+  addEdge({0, 3, 34});
+  addEdge({0, 4, 21});
+  addEdge({0, 5, 45});
+
+  addEdge({1, 2, 18});
+  addEdge({1, 3, 25});
+  addEdge({1, 4, 26});
+  addEdge({1, 5, 27});
+
+  addEdge({2, 3, 17});
+  addEdge({2, 4, 28});
+  addEdge({2, 5, 30});
+
+  addEdge({3, 4, 16});
+  addEdge({3, 5, 28});
+
+  addEdge({4, 5, 15});
 }
 
 void Graph::addEdge(Edge e) {

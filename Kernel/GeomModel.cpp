@@ -59,8 +59,11 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
     return;
 
   switch (action.status) {
-  case QApp::Kernel::EButtonStatus::Clicked:
+  case QApp::Kernel::EButtonStatus::RunAnimation:
     active_animator_.startAnimation(graph_);
+    break;
+  case QApp::Kernel::EButtonStatus::PauseAnimation:
+    active_animator_.pauseAnimation();
     break;
   default:
     assert(false);

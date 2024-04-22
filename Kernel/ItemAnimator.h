@@ -27,6 +27,7 @@ public:
   ItemAnimator& operator=(ItemAnimator&&) noexcept = delete;
 
   void startAnimation(const Graph&);
+  void pauseAnimation();
   void stopAnimation();
 
 private Q_SLOTS:

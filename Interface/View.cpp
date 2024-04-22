@@ -83,8 +83,14 @@ void View::mouseReleased(const QPointF& pos) {
 
 void View::onRunButtonClicked() {
   qDebug() << "run button clicked";
-  runButton_->setText("Stop");
-  out_button_port_.set(std::in_place_t(), EButtonStatus::Clicked);
+  if (runButton_->text() == "Run") {
+    runButton_->setText("Stop");
+    out_button_port_.set(std::in_place_t(), EButtonStatus::RunAnimation);
+  } else {
+    assert(runButton_->text() == "Stop");
+    runButton_->setText("Run");
+    out_button_port_.set(std::in_place_t(), EButtonStatus::PauseAnimation);
+  }
 }
 
 void View::onEditButtonClicked() {
@@ -179,11 +185,12 @@ void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdg
   plot_item->setPen(QPen(outEdge.contur, 3));
   plot_item.release()->attach(plot_.get());
 
+  double partCoeff = 3;
   QPointF k = v;
   k.ry() *= -1.;
   k = k.transposed();
   k /= std::sqrt(QPointF::dotProduct(k, k));
-  QPointF labelPos = (p1 + p2) / 2 + 5 * k;
+  QPointF labelPos = (partCoeff * p1 + p2) / (1 + partCoeff) + 5 * k;
 
   std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
   marker->setValue(labelPos);
