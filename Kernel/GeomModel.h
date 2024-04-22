@@ -3,6 +3,7 @@
 #include "DrawData.h"
 #include "Graph.h"
 #include "ItemAction.h"
+#include "ItemAnimator.h"
 #include "MouseAction.h"
 #include "Palette.h"
 #include "QObserver.h"
@@ -32,11 +33,13 @@ public:
   void subscribeToItemAction(ObserverAction* obs);
 
   void handleMouseAction(const MouseAction& action);
+  void handleButtonAction(const ButtonAction& action);
 
 private:
   void onMousePress_(const QPointF& position);
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
+  void onActiveAnimation_(int, const DrawData::DrawEdge&);
   void onFieldData(GraphData&& data);
 
   int touchedItem_(const QPointF& position) const;
@@ -44,7 +47,9 @@ private:
   static constexpr int k_non = -1;
 
   Data data_;
+  Graph graph_; // refactor
   Palette palette_;
+  ItemAnimator active_animator_;
   int active_index_ = k_non;
   QPointF diff_ = {0., 0.};
   Observable port_ = [this]() -> const Data& { return data_; };

@@ -40,5 +40,9 @@ DisjointSet::Element DisjointSet::getParent(DisjointSet::Element elem) const {
   return Sets_.find(elem)->second;
 }
 
+void DisjointSet::clear() {
+  Sets_.clear();
+}
+
 } // namespace Kernel
 } // namespace QApp

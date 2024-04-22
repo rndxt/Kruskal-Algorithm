@@ -12,5 +12,11 @@ struct MouseAction {
   QPointF position;
 };
 
+enum class EButtonStatus { Clicked };
+
+struct ButtonAction {
+  EButtonStatus status;
+};
+
 } // namespace Kernel
 } // namespace QApp

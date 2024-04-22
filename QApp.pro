@@ -119,6 +119,7 @@ SOURCES += \
   Kernel/FieldModel.cpp \
   Kernel/GeomModel.cpp \
   Kernel/Palette.cpp \
+  Kernel/ItemAnimator.cpp \
   Library/QTimeAnchor.cpp \
   Library/Random.cpp \
   Library/Time.cpp \
@@ -144,6 +145,7 @@ HEADERS += \
   Kernel/GeomModel.h \
   Kernel/MouseAction.h \
   Kernel/Palette.h \
+  Kernel/ItemAnimator.h \
   Library/QTimeAnchor.h \
   Library/Random.h \
   Library/Time.h \

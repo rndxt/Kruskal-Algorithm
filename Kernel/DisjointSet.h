@@ -16,6 +16,8 @@ public:
   Element findSet(Element elem) const;
   int getCountSets() const;
 
+  void clear();
+
 private:
   using Container = std::unordered_map<Element, Element>;
 

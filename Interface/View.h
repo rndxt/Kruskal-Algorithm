@@ -1,5 +1,11 @@
 #pragma once
 
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QSlider>
+#include <QLabel>
+#include <qwt_plot.h>
+
 #include "Kernel/DrawData.h"
 #include "Kernel/MouseAction.h"
 #include "QObserver.h"
@@ -30,16 +36,26 @@ class View : public QObject {
   using ObservableMouse = Library::CObservableDataMono<MouseData>;
   using ObserverMouse = Library::CObserver<MouseData>;
 
+  using EButtonStatus = Kernel::EButtonStatus;
+  using ButtonAction = Kernel::ButtonAction;
+  using ButtonData = std::optional<ButtonAction>;
+  using ObservableButton= Library::CObservableDataMono<ButtonData>;
+  using ObserverButton= Library::CObserver<ButtonData>;
+
 public:
   View();
   ~View();
 
   ObserverState* port();
   void subscribe(ObserverMouse* obs);
+  void subscribeRunButton(ObserverButton* obs);
 
   QwtPlot* plot();
+  QVBoxLayout* layout();
 
 private Q_SLOTS:
+  void onRunButtonClicked();
+  void onEditButtonClicked();
   void mousePressed(const QPointF& pos);
   void mouseMoved(const QPointF& pos);
   void mouseReleased(const QPointF& pos);
@@ -55,9 +71,17 @@ private:
   void drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdge& outEdge);
   
   std::unique_ptr<QwtPlot> plot_;
+  std::unique_ptr<QVBoxLayout> vboxLayout_;
+  std::unique_ptr<QHBoxLayout> hboxLayout_;
+  std::unique_ptr<QPushButton> editButton_;
+  std::unique_ptr<QPushButton> runButton_;
+  std::unique_ptr<QSlider> slider_;
+  std::unique_ptr<QLabel> label_;
+
   QwtPlotPicker* picker_;
   ObserverState in_port_;
   ObservableMouse out_port_;
+  ObservableButton out_button_port_;
 };
 
 } // namespace Interface

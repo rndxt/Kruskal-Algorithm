@@ -65,31 +65,6 @@ void Graph::removeVertex(VertexId u) {
   AdjLists_.erase(u);
 }
 
-// Graph Graph::getMST() const {
-//   int CountVertices = getVerticesCount();
-//   Graph MST();
-//   for (int i = 0; i < CountVertices; ++i) {
-
-//   }
-
-//   DisjointSet DSU;
-//   for (const auto &[u, outEdge] : AdjLists_) {
-//     DSU.makeSet(u);
-//   }
-
-//   SortedEdges sortedEdges = getSortedEdges();
-//   for (Edge e : sortedEdges) {
-//     if (DSU.findSet(e.u) != DSU.findSet(e.v)) {
-//       MST.addEdge(e);
-//       DSU.join(e.u, e.v);
-//     }
-//   }
-
-//   assert(MST.getCountEdges() == getVerticesCount() - DSU.getCountSets()
-//          && "MST always contain a N-K edges (K = number connected components)");
-//   return MST;
-// }
-
 size_t Graph::getVerticesCount() const {
   return AdjLists_.size();
 }
@@ -104,8 +79,9 @@ Graph::SortedEdges Graph::getSortedEdges() const {
     auto st = outEdges.upper_bound({v, 0});
     auto end = outEdges.end();
     auto convertOutEdge = [&u = v](OutEdge e) { return Edge{u, e.v, e.w}; };
-    std::transform(st, end, std::inserter(sortedEdges, sortedEdges.end()), convertOutEdge);
+    std::transform(st, end, std::back_inserter(sortedEdges), convertOutEdge);
   }
+  std::ranges::sort(sortedEdges, {}, &Edge::w);
 
   assert(ssize(sortedEdges) == CountEdges_
          && "List of sorted edges by weight contains not all edges");

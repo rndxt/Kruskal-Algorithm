@@ -20,11 +20,29 @@ namespace Interface {
 
 View::View()
     : plot_(std::make_unique<QwtPlot>()),
+      vboxLayout_(std::make_unique<QVBoxLayout>()),
+      hboxLayout_(std::make_unique<QHBoxLayout>()),
+      editButton_(std::make_unique<QPushButton>("Edit graph")),
+      runButton_(std::make_unique<QPushButton>("Run")),
+      slider_(std::make_unique<QSlider>(Qt::Orientation::Horizontal)),
+      label_(std::make_unique<QLabel>("label")),
       picker_(new QwtPlotPicker(plot_->canvas())),
       in_port_([this](Data&& data) { drawData(std::move(data)); }) {
   assert(plot_);
   adjustPlot(plot_.get());
   setPicker(picker_);
+
+  hboxLayout_->addWidget(editButton_.get(), 0, Qt::AlignLeft);
+  QObject::connect(editButton_.get(), &QPushButton::clicked, this, &View::onEditButtonClicked);
+
+  hboxLayout_->addWidget(runButton_.get(), 1, Qt::AlignLeft);
+  QObject::connect(runButton_.get(), &QPushButton::clicked, this, &View::onRunButtonClicked);
+
+  hboxLayout_->addWidget(slider_.get(), 2, Qt::AlignLeft);
+  hboxLayout_->addWidget(label_.get(), 3, Qt::AlignRight);
+
+  vboxLayout_->addLayout(hboxLayout_.get());
+  vboxLayout_->addWidget(plot());
 }
 
 View::~View() = default;
@@ -38,8 +56,17 @@ void View::subscribe(ObserverMouse* obs) {
   out_port_.subscribe(obs);
 }
 
+void View::subscribeRunButton(ObserverButton* obs) {
+  assert(obs);
+  out_button_port_.subscribe(obs);
+}
+
 QwtPlot* View::plot() {
   return plot_.get();
+}
+
+QVBoxLayout* View::layout() {
+  return vboxLayout_.get();
 }
 
 void View::mousePressed(const QPointF& pos) {
@@ -52,6 +79,16 @@ void View::mouseMoved(const QPointF& pos) {
 
 void View::mouseReleased(const QPointF& pos) {
   out_port_.set(std::in_place_t(), EMouseStatus::Released, pos);
+}
+
+void View::onRunButtonClicked() {
+  qDebug() << "run button clicked";
+  runButton_->setText("Stop");
+  out_button_port_.set(std::in_place_t(), EButtonStatus::Clicked);
+}
+
+void View::onEditButtonClicked() {
+  qDebug() << "edit button clicked";
 }
 
 void View::adjustPlot(QwtPlot* plot) {
@@ -139,7 +176,7 @@ void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdg
   path.moveTo(p1);
   path.lineTo(p2);
   plot_item->setShape(path);
-  plot_item->setPen(QPen(outEdge.contur, 2));
+  plot_item->setPen(QPen(outEdge.contur, 3));
   plot_item.release()->attach(plot_.get());
 
   QPointF k = v;
@@ -154,6 +191,7 @@ void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdg
   QFont font = label.font();
   font.setPixelSize(22);
   label.setFont(font);
+  label.setColor(outEdge.contur);
   marker->setLabel(label);
   marker.release()->attach(plot_.get());
 }

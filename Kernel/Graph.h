@@ -28,8 +28,6 @@ public:
   void addVertex(VertexId u);
   void removeVertex(VertexId u);
 
-  // Graph getMST() const;
-
   size_t getVerticesCount() const;
   int getCountEdges() const;
 
@@ -44,7 +42,7 @@ public:
 
   using AdjacentEdges = std::set<OutEdge>;
   using Container = std::unordered_map<VertexId, AdjacentEdges>;
-  using SortedEdges = std::multiset<Edge>;
+  using SortedEdges = std::vector<Edge>;
 
   SortedEdges getSortedEdges() const;
   AdjacentEdges &adjacent(VertexId v);
