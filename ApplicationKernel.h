@@ -9,7 +9,7 @@ namespace QApp {
 class ApplicationKernel {
   using AlgorithmModel = Kernel::AlgorithmModel;
   using GeomModel = Kernel::GeomModel;
-  using FieldController = Kernel::FieldController;
+  using AlgorithmController = Kernel::AlgorithmController;
 
 public:
   ApplicationKernel();
@@ -17,7 +17,7 @@ public:
 protected:
   AlgorithmModel model_;
   GeomModel geom_model_;
-  FieldController field_controller_;
+  AlgorithmController field_controller_;
 };
 
 } // namespace QApp

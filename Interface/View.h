@@ -55,7 +55,6 @@ public:
   QPushButton* editButton();
   QPushButton* runButton();
   QSlider* slider();
-  QLabel* label();
   QTableWidget* table();
 
 private Q_SLOTS:
@@ -80,7 +79,6 @@ private:
   std::unique_ptr<QPushButton> editButton_;
   std::unique_ptr<QPushButton> runButton_;
   std::unique_ptr<QSlider> slider_;
-  std::unique_ptr<QLabel> label_;
   std::unique_ptr<QTableWidget> table_;
 
   QwtPlotPicker* picker_;

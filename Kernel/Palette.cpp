@@ -5,17 +5,18 @@
 namespace QApp {
 namespace Kernel {
 
+NodeStatus NodeStatusF::fromInt(int index) {
+  assert(index < size() && index >= 0);
+  return static_cast<NodeStatus>(index);
+}
+
 EdgeStatus EdgeStatusF::fromInt(int index) {
   assert(index < size() && index >= 0);
   return static_cast<EdgeStatus>(index);
 }
 
-// QColor Palette::fill(EdgeStatus status) const {
-//   return fill_[EdgeStatusF::toIndex(status)];
-// }
-
-QColor Palette::nodeCountur(ItemStatus status) const {
-  return nodeCountur_[ItemStatusF::toIndex(status)];
+QColor Palette::nodeCountur(NodeStatus status) const {
+  return nodeCountur_[NodeStatusF::toIndex(status)];
 }
 
 QColor Palette::edgeCountur(EdgeStatus status) const {

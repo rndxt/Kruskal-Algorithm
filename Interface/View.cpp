@@ -23,7 +23,6 @@ View::View()
       editButton_(std::make_unique<QPushButton>("Edit graph")),
       runButton_(std::make_unique<QPushButton>("Run")),
       slider_(std::make_unique<QSlider>(Qt::Orientation::Horizontal)),
-      label_(std::make_unique<QLabel>("label")),
       table_(std::make_unique<QTableWidget>()),
       picker_(new QwtPlotPicker(plot_->canvas())),
       in_port_([this](Data&& data) { drawData(std::move(data)); }) {
@@ -71,10 +70,6 @@ QPushButton* View::runButton() {
 
 QSlider* View::slider() {
   return slider_.get();
-}
-
-QLabel* View::label() {
-  return label_.get();
 }
 
 QTableWidget* View::table() {
@@ -171,11 +166,15 @@ void View::drawNode(const DrawNode& node) {
   path.addEllipse(node.center, node.radius, node.radius);
   plot_item->setShape(path);
   plot_item->setPen(QPen(node.contur, 2));
+  if (node.contur == Qt::white)
+    plot_item->setBrush(QBrush(QColor("orange")));
   plot_item.release()->attach(plot_.get());
 
   std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
   marker->setValue(node.center);
   QwtText label = QwtText(QString::number(node.id));
+  if (node.contur == Qt::white)
+    label.setColor(Qt::white);
   QFont font = label.font();
   font.setPixelSize(22);
   label.setFont(font);

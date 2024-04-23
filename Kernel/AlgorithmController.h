@@ -10,12 +10,12 @@ namespace Kernel {
 
 class AlgorithmModel;
 
-class FieldController {
+class AlgorithmController {
   using ItemData = std::optional<ItemAction>;
   using Observer = Library::CObserver<ItemData>;
 
 public:
-  FieldController(AlgorithmModel* model);
+  AlgorithmController(AlgorithmModel* model);
   Observer* port();
 
 private:

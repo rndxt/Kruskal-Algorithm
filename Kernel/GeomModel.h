@@ -3,8 +3,8 @@
 #include "Algorithm.h"
 #include "AlgorithmAction.h"
 #include "DrawData.h"
-#include "ItemAnimator.h"
 #include "MouseAction.h"
+#include "NodeAnimator.h"
 #include "Palette.h"
 #include "QObserver.h"
 
@@ -43,9 +43,8 @@ private:
   void onMousePress_(const QPointF& position);
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
-  // void onActiveAnimation_(int vertexId, const DrawData::DrawEdge& drawEdge,
-  // const DrawData::DrawChangesTable& drawChanges);
-  void onAnimationDsuLabel(const DrawData::DrawLabelInfo labelInfo);
+  void onAnimationNode(const DrawData::DrawNode& node1,
+                       const DrawData::DrawNode& node2);
   void onAlgorithmData(AlgorithmData&& data);
   void onNextStepData(AlgorithmData&& data);
 
@@ -55,7 +54,7 @@ private:
 
   Data data_;
   Palette palette_;
-  LabelAnimator label_animator_;
+  NodeAnimator node_animator_;
   int active_index_ = k_non;
   QPointF diff_ = {0., 0.};
   Observable port_ = [this]() -> const Data& { return data_; };

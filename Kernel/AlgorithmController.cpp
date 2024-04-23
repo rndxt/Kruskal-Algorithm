@@ -7,22 +7,22 @@
 namespace QApp {
 namespace Kernel {
 
-FieldController::FieldController(AlgorithmModel* model)
+AlgorithmController::AlgorithmController(AlgorithmModel* model)
     : host_(model),
       port_([this](ItemData&& data) { onItemData(std::move(data)); }) {
   assert(host_);
 }
 
-FieldController::Observer* FieldController::port() {
+AlgorithmController::Observer* AlgorithmController::port() {
   return &port_;
 }
 
-void FieldController::onItemData(ItemData&& data) {
+void AlgorithmController::onItemData(ItemData&& data) {
   if (data.has_value())
     onItemAction(std::move(*data));
 }
 
-void FieldController::onItemAction(ItemAction action) {
+void AlgorithmController::onItemAction(ItemAction action) {
   assert(host_);
   host_->makeNextStep();
 }

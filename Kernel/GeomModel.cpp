@@ -10,8 +10,9 @@ namespace QApp {
 namespace Kernel {
 
 GeomModel::GeomModel()
-    : label_animator_([this](const DrawData::DrawLabelInfo& info) {
-        onAnimationDsuLabel(info);
+    : node_animator_([this](const DrawData::DrawNode& node1,
+                            const DrawData::DrawNode& node2) {
+        onAnimationNode(node1, node2);
       }),
       in_port_(
           [this](AlgorithmData&& data) { onAlgorithmData(std::move(data)); }),
@@ -84,7 +85,7 @@ void GeomModel::onMousePress_(const QPointF& position) {
 
   active_index_ = vertexId;
   diff_ = position - data_->nodes[active_index_].center;
-  data_->nodes[active_index_].contur = palette_.nodeCountur(ItemStatus::Active);
+  data_->nodes[active_index_].contur = palette_.nodeCountur(NodeStatus::Active);
   port_.notify();
 }
 
@@ -103,13 +104,18 @@ void GeomModel::onMouseRelease_(const QPointF& position) {
     return;
 
   data_->nodes[active_index_].contur
-      = palette_.nodeCountur(ItemStatus::Inactive);
+      = palette_.nodeCountur(NodeStatus::Inactive);
   port_.notify();
   diff_ = {0., 0.};
   active_index_ = k_non;
 }
 
-void GeomModel::onAnimationDsuLabel(const DrawData::DrawLabelInfo labelInfo) {}
+void GeomModel::onAnimationNode(const DrawData::DrawNode& node1,
+                                const DrawData::DrawNode& node2) {
+  data_->nodes[node1.id] = node1;
+  data_->nodes[node2.id] = node2;
+  port_.notify();
+}
 
 // void GeomModel::onActiveAnimation_(int vertexId,
 //                                    const DrawData::DrawEdge& drawEdge,
@@ -182,19 +188,11 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
 
   const Graph& graph = data->graph();
   const DisjointSet& dsu = data->dsu();
-  DrawData::DrawLabelInfo drawLabelInfo;
-  size_t j = 0;
   auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
   for (auto [i, vertexId] : v) {
     assert(data_->table[i].vertex == vertexId);
-    int newIndex = dsu.findSet(vertexId);
-    int oldIndex = std::exchange(data_->table[i].index, newIndex);
-    if (oldIndex != newIndex) {
-      drawLabelInfo[j++] = {vertexId, oldIndex};
-    }
+    data_->table[i].index = dsu.findSet(vertexId);
   }
-  assert(j == 2);
-  label_animator_.startAnimation(drawLabelInfo);
 
   const auto& edgesWithStatus = data->edgesWithInfo();
   for (const auto& [edge, status] : edgesWithStatus) {
@@ -202,8 +200,8 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
         = std::ranges::find(data_->edges[edge.u], edge.v, &DrawEdge::vertexId);
     assert(it != end(data_->edges[edge.u]));
     QColor newStatus = palette_.edgeCountur(status);
-    if (std::exchange(it->contur, newStatus) != palette_.edgeCountur(status)) {
-      // animate add
+    if (std::exchange(it->contur, newStatus) != newStatus) {
+      node_animator_.startAnimation(data_->nodes[edge.u], data_->nodes[edge.v]);
     }
   }
 

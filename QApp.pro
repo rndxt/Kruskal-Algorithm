@@ -113,6 +113,7 @@ SOURCES += \
   Interface/MainWindow.cpp \
     Kernel/AlgorithmController.cpp \
     Kernel/AlgorithmModel.cpp \
+    Kernel/NodeAnimator.cpp \
   dialog.cpp \
   Interface/PlotController.cpp \
   Interface/View.cpp \
@@ -121,7 +122,6 @@ SOURCES += \
   Kernel/Algorithm.cpp \
   Kernel/GeomModel.cpp \
   Kernel/Palette.cpp \
-  Kernel/ItemAnimator.cpp \
   Library/QTimeAnchor.cpp \
   Library/Random.cpp \
   Library/Time.cpp \
@@ -140,6 +140,7 @@ HEADERS += \
   Kernel/AlgorithmAction.h \
   Kernel/AlgorithmController.h \
   Kernel/AlgorithmModel.h \
+  Kernel/NodeAnimator.h \
   dialog.h \
   Interface/PlotController.h \
   Interface/View.h \
@@ -150,7 +151,6 @@ HEADERS += \
   Kernel/GeomModel.h \
   Kernel/MouseAction.h \
   Kernel/Palette.h \
-  Kernel/ItemAnimator.h \
   Library/QTimeAnchor.h \
   Library/Random.h \
   Library/Time.h \

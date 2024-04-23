@@ -20,15 +20,9 @@ Algorithm::Algorithm() {
 
   for (auto edge : edges) {
     graph_.addEdge(edge);
+    sortedEdges_.emplace_back(edge, EdgeStatus::Unknown);
   }
 
-  for (const auto& [v, outEdges] : graph_.AdjLists_) {
-    std::transform(
-        outEdges.upper_bound({v, 0}), end(outEdges),
-        std::back_inserter(sortedEdges_), [&u = v](Graph::OutEdge e) {
-          return EdgeWithStatus{Edge{u, e.v, e.w}, EdgeStatus::Unknown};
-        });
-  }
   std::ranges::sort(
       sortedEdges_,
       [](const Edge& lhs, const Edge& rhs) { return lhs.w < rhs.w; },

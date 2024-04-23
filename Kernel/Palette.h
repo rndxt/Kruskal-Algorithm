@@ -9,16 +9,17 @@
 namespace QApp {
 namespace Kernel {
 
-enum class ItemStatus : int { Inactive, Active, END };
+enum class NodeStatus : int { Inactive, Active, END };
 
-struct ItemStatusF {
-  static constexpr int toIndex(ItemStatus status) {
+struct NodeStatusF {
+  static constexpr int toIndex(NodeStatus status) {
     return static_cast<int>(status);
   }
   static constexpr int size() {
-    return toIndex(ItemStatus::END);
+    return toIndex(NodeStatus::END);
   }
-  static ItemStatus fromInt(int);
+
+  static NodeStatus fromInt(int);
 };
 
 struct EdgeStatusF {
@@ -29,6 +30,7 @@ struct EdgeStatusF {
   static constexpr int size() {
     return toIndex(EdgeStatus::Unknown) + 1;
   }
+
   static EdgeStatus fromInt(int);
 };
 
@@ -40,7 +42,7 @@ struct Palette {
   double node_radius = 10;
 
   QColor edgeCountur(EdgeStatus status) const;
-  QColor nodeCountur(ItemStatus status) const;
+  QColor nodeCountur(NodeStatus status) const;
 
 private:
   std::array<QColor, 2> nodeCountur_ = {Qt::black, Qt::gray};
