@@ -5,19 +5,21 @@
 namespace QApp {
 namespace Kernel {
 
-ItemStatus ItemStatusF::fromInt(int index) {
+EdgeStatus EdgeStatusF::fromInt(int index) {
   assert(index < size() && index >= 0);
-  if (index < 0 || index >= size())
-    return ItemStatus::END;
-  return static_cast<ItemStatus>(index);
+  return static_cast<EdgeStatus>(index);
 }
 
-QColor Palette::fill(ItemStatus status) const {
-  return fill_[ItemStatusF::toIndex(status)];
+// QColor Palette::fill(EdgeStatus status) const {
+//   return fill_[EdgeStatusF::toIndex(status)];
+// }
+
+QColor Palette::nodeCountur(ItemStatus status) const {
+  return nodeCountur_[ItemStatusF::toIndex(status)];
 }
 
-QColor Palette::countur(ItemStatus status) const {
-  return countur_[ItemStatusF::toIndex(status)];
+QColor Palette::edgeCountur(EdgeStatus status) const {
+  return edgeCountur_[EdgeStatusF::toIndex(status)];
 }
 
 } // namespace Kernel

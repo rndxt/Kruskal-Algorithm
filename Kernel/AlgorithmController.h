@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ItemAction.h"
+#include "AlgorithmAction.h"
 #include "QObserver.h"
 
 #include <optional>
@@ -8,21 +8,21 @@
 namespace QApp {
 namespace Kernel {
 
-class FieldModel;
+class AlgorithmModel;
 
 class FieldController {
   using ItemData = std::optional<ItemAction>;
   using Observer = Library::CObserver<ItemData>;
 
 public:
-  FieldController(FieldModel* model);
+  FieldController(AlgorithmModel* model);
   Observer* port();
 
 private:
   void onItemData(ItemData&& data);
   void onItemAction(ItemAction action);
 
-  FieldModel* host_;
+  AlgorithmModel* host_;
   Observer port_;
 };
 

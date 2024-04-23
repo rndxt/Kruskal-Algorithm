@@ -1,20 +1,19 @@
 #include "View.h"
 
+#include <QDebug>
+#include <QFont>
+#include <QHeaderView>
 #include <QPainterPath>
 #include <QPen>
-#include <QFont>
+#include <cassert>
 #include <qwt_picker_machine.h>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_marker.h>
 #include <qwt_plot_picker.h>
 #include <qwt_plot_shapeitem.h>
-#include <qwt_plot_marker.h>
 #include <qwt_text.h>
-#include <QHeaderView>
-
-#include <QDebug>
-
-#include <cassert>
+#include <ranges>
 
 namespace QApp {
 namespace Interface {
@@ -148,15 +147,14 @@ void View::draw(const DrawData& data) {
   table_->resizeColumnsToContents();
 
   plot_->detachItems();
-  for (auto& [id, node]: data.nodes) {
-    drawNode(node);
-  }
+  std::ranges::for_each(std::views::values(data.nodes),
+                        [this](const DrawNode& node) { drawNode(node); });
 
   for (auto& [id, outEdges] : data.edges) {
     assert(std::ranges::is_sorted(outEdges, {}, &DrawEdge::vertexId));
     auto it = std::ranges::lower_bound(outEdges, id, {}, &DrawEdge::vertexId);
     auto v = std::ranges::subrange(it, end(outEdges));
-    for (auto &outEdge : v) {
+    for (auto& outEdge : v) {
       assert(data.nodes.contains(id));
       assert(data.nodes.contains(outEdge.vertexId));
       drawEdge(data.nodes.find(outEdge.vertexId)->second,
@@ -185,14 +183,15 @@ void View::drawNode(const DrawNode& node) {
   marker.release()->attach(plot_.get());
 }
 
-void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdge& outEdge) {
+void View::drawEdge(const DrawNode& first, const DrawNode& second,
+                    const DrawEdge& outEdge) {
   QPointF v = second.center - first.center;
   v /= std::sqrt(QPointF::dotProduct(v, v));
   QPointF p1 = first.center + first.radius * v;
   QPointF p2 = second.center - second.radius * v;
 
-  std::unique_ptr<QwtPlotShapeItem> plot_item =
-      std::make_unique<QwtPlotShapeItem>();
+  std::unique_ptr<QwtPlotShapeItem> plot_item
+      = std::make_unique<QwtPlotShapeItem>();
   QPainterPath path;
   path.moveTo(p1);
   path.lineTo(p2);
@@ -200,12 +199,11 @@ void View::drawEdge(const DrawNode& first, const DrawNode& second, const DrawEdg
   plot_item->setPen(QPen(outEdge.contur, 3));
   plot_item.release()->attach(plot_.get());
 
-  double partCoeff = 3;
-  QPointF k = v;
-  k.ry() *= -1.;
-  k = k.transposed();
+  constexpr double partCoeff = 3.;
+  constexpr double resizeCoeff = 5.;
+  QPointF k = {-v.y(), v.x()};
   k /= std::sqrt(QPointF::dotProduct(k, k));
-  QPointF labelPos = (partCoeff * p1 + p2) / (1 + partCoeff) + 5 * k;
+  QPointF labelPos = (partCoeff * p1 + p2) / (1 + partCoeff) + resizeCoeff * k;
 
   std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
   marker->setValue(labelPos);

@@ -2,10 +2,9 @@
 
 #include <QColor>
 #include <QPointF>
-
 #include <array>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace QApp {
 namespace Kernel {
@@ -13,10 +12,15 @@ namespace Kernel {
 struct DrawData {
   struct DrawChangesOfTableItem {
     int vertex;
-    int newIndex;
+    int oldIndex;
   };
 
-  using DrawChangesTable = std::array<DrawChangesOfTableItem, 2>;
+  using DrawLabelInfo = std::array<DrawChangesOfTableItem, 2>;
+
+  struct DrawTableItem {
+    int vertex;
+    int index;
+  };
 
   struct DrawNode {
     QPointF center;
@@ -31,10 +35,10 @@ struct DrawData {
     QColor contur;
   };
 
-
   std::unordered_map<int, DrawNode> nodes;
   std::unordered_map<int, std::vector<DrawEdge>> edges;
-  std::unordered_map<int, int> table;
+  std::vector<DrawTableItem> table;
+  DrawLabelInfo labelInfo;
 };
 
 } // namespace Kernel

@@ -15,7 +15,6 @@ public:
   void join(Element lhs, Element rhs);
   Element findSet(Element elem) const;
   int getCountSets() const;
-
   void clear();
 
 private:

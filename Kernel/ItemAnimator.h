@@ -2,9 +2,6 @@
 
 #include "DrawData.h"
 
-#include "Graph.h"
-#include "DisjointSet.h"
-
 #include <QColor>
 #include <QTimer>
 
@@ -13,35 +10,28 @@
 namespace QApp {
 namespace Kernel {
 
-class ItemAnimator : public QObject {
+class LabelAnimator : public QObject {
   Q_OBJECT
 
-  using DrawEdge = DrawData::DrawEdge;
-  using DrawChangesTable = DrawData::DrawChangesTable;
-  using Action = std::function<void(int, const DrawEdge&, const DrawData::DrawChangesTable&)>;
+  using DrawLabelInfo = DrawData::DrawLabelInfo;
+  using Action = std::function<void(const DrawLabelInfo&)>;
 
 public:
-  ItemAnimator(Action f);
-  ItemAnimator(const ItemAnimator&) = delete;
-  ItemAnimator(ItemAnimator&&) noexcept = delete;
-  ItemAnimator& operator=(const ItemAnimator&) = delete;
-  ItemAnimator& operator=(ItemAnimator&&) noexcept = delete;
+  LabelAnimator(Action f);
+  LabelAnimator(const LabelAnimator&) = delete;
+  LabelAnimator(LabelAnimator&&) noexcept = delete;
+  LabelAnimator& operator=(const LabelAnimator&) = delete;
+  LabelAnimator& operator=(LabelAnimator&&) noexcept = delete;
 
-  void startAnimation(const Graph&);
-  void pauseAnimation();
-  void stopAnimation();
+  void startAnimation(const DrawLabelInfo&);
 
 private Q_SLOTS:
   void onTimer();
 
 private:
   Action action_;
-  Graph graph_;
-  DrawEdge current_;
-  DisjointSet dsu_;
-  Graph::SortedEdges sortedEdges_;
+  DrawLabelInfo current_;
   bool active_ = false;
-  int step_ = 0;
   QTimer timer_;
 };
 

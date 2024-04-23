@@ -10,12 +10,20 @@ namespace QApp {
 namespace Kernel {
 
 GeomModel::GeomModel()
-    : active_animator_([this](int vertexId, const DrawData::DrawEdge& edge, const DrawData::DrawChangesTable& changes) { onActiveAnimation_(vertexId, edge, changes); }),
-      in_port_([this](GraphData&& data) { onFieldData(std::move(data)); }) {
+    : label_animator_([this](const DrawData::DrawLabelInfo& info) {
+        onAnimationDsuLabel(info);
+      }),
+      in_port_(
+          [this](AlgorithmData&& data) { onAlgorithmData(std::move(data)); }),
+      next_step_port_(
+          [this](AlgorithmData&& data) { onNextStepData(std::move(data)); }) {}
+
+GeomModel::ObserverAlgorithm* GeomModel::port() {
+  return &in_port_;
 }
 
-GeomModel::ObserverField* GeomModel::port() {
-  return &in_port_;
+GeomModel::ObserverAlgorithm* GeomModel::nextStepPort() {
+  return &next_step_port_;
 }
 
 void GeomModel::subscribeToDrawData(Observer* obs) {
@@ -55,10 +63,11 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
 
   switch (action.status) {
   case EButtonStatus::RunAnimation:
-    active_animator_.startAnimation(graph_);
+    action_port_.set(std::in_place_t(), 0, 0, 0);
+    // active_animator_.startAnimation();
     break;
   case EButtonStatus::PauseAnimation:
-    active_animator_.pauseAnimation();
+    // active_animator_.pauseAnimation();
     break;
   default:
     assert(false);
@@ -75,7 +84,7 @@ void GeomModel::onMousePress_(const QPointF& position) {
 
   active_index_ = vertexId;
   diff_ = position - data_->nodes[active_index_].center;
-  data_->nodes[active_index_].contur = palette_.countur(ItemStatus::Active);
+  data_->nodes[active_index_].contur = palette_.nodeCountur(ItemStatus::Active);
   port_.notify();
 }
 
@@ -93,32 +102,35 @@ void GeomModel::onMouseRelease_(const QPointF& position) {
   if (active_index_ == k_non)
     return;
 
-  data_->nodes[active_index_].contur = palette_.countur(ItemStatus::Inactive);
+  data_->nodes[active_index_].contur
+      = palette_.nodeCountur(ItemStatus::Inactive);
   port_.notify();
   diff_ = {0., 0.};
   active_index_ = k_non;
 }
 
-void GeomModel::onActiveAnimation_(int vertexId,
-                                   const DrawData::DrawEdge& drawEdge,
-                                   const DrawData::DrawChangesTable& drawTable) {
-  assert(data_.has_value());
-  assert(data_->nodes.contains(vertexId));
-  for (auto [vertex, index] : drawTable) {
-    data_->table[vertex] = index;
-  }
+void GeomModel::onAnimationDsuLabel(const DrawData::DrawLabelInfo labelInfo) {}
 
-  data_->nodes[vertexId].contur = QColor("orange");
-  data_->nodes[drawEdge.vertexId].contur = QColor("orange");
-  auto it = std::ranges::lower_bound(data_->edges[vertexId], drawEdge.vertexId,
-                                     {}, &DrawData::DrawEdge::vertexId);
-  assert(it != end(data_->edges[vertexId]));
-  it->contur = drawEdge.contur;
-  port_.notify();
-}
+// void GeomModel::onActiveAnimation_(int vertexId,
+//                                    const DrawData::DrawEdge& drawEdge,
+//                                    const DrawData::DrawChangesTable&
+//                                    drawTable) {
+//   assert(data_.has_value());
+// for (auto [vertex, index] : drawTable) {
+//   data_->table[vertex] = index;
+// }
 
-void GeomModel::onFieldData(GraphData&& data) {
-  qDebug() << "GeomModel::onFieldData";
+// data_->nodes[vertexId].contur = QColor("orange");
+// data_->nodes[drawEdge.vertexId].contur = QColor("orange");
+// auto it = std::ranges::lower_bound(data_->edges[vertexId],
+// drawEdge.vertexId,
+//                                    {}, &DrawData::DrawEdge::vertexId);
+// assert(it != end(data_->edges[vertexId]));
+// it->contur = drawEdge.contur;
+//   port_.notify();
+// }
+
+void GeomModel::onAlgorithmData(AlgorithmData&& data) {
   if (!data.has_value()) {
     if (data_.has_value()) {
       data_.reset();
@@ -130,17 +142,23 @@ void GeomModel::onFieldData(GraphData&& data) {
   if (!data_.has_value())
     data_.emplace();
 
-  graph_ = *data;
-  size_t countVertices = graph_.getVerticesCount();
+  data_->edges.clear();
+  data_->nodes.clear();
+  data_->table.clear();
 
-  for (int i = 0; i < countVertices; ++i) {
-    data_->table.insert({i, i});
+  const Graph& graph = data->graph();
+  const DisjointSet& dsu = data->dsu();
+
+  for (int vertexId : std::views::keys(graph.AdjLists_)) {
+    data_->table.emplace_back(vertexId, dsu.findSet(vertexId));
   }
 
-  double xc = 400.;
-  double yc = 300.;
-  double R = 100;
-  auto v = graph_.AdjLists_ | std::views::keys | std::views::enumerate;
+  constexpr double xc = 400.;
+  constexpr double yc = 300.;
+  constexpr double R = 100;
+  size_t countVertices = graph.getVerticesCount();
+
+  auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
   for (auto [i, vertex] : v) {
     double angle = 2 * std::numbers::pi * i / countVertices;
     QPointF center = {xc + R * std::cos(angle), yc + R * std::sin(angle)};
@@ -148,18 +166,54 @@ void GeomModel::onFieldData(GraphData&& data) {
                          DrawData::DrawNode{center, 10, Qt::black, vertex});
   }
 
-  for (const auto &[vertex, outEdges] : graph_.AdjLists_) {
-    for (const auto &outEdge : outEdges) {
+  for (const auto& [vertex, outEdges] : graph.AdjLists_) {
+    for (const auto& outEdge : outEdges) {
       data_->edges[vertex].emplace_back(outEdge.v, outEdge.w, Qt::black);
     }
   }
+
+  port_.notify();
+}
+
+void GeomModel::onNextStepData(AlgorithmData&& data) {
+  assert(data_.has_value());
+  if (!data.has_value())
+    return;
+
+  const Graph& graph = data->graph();
+  const DisjointSet& dsu = data->dsu();
+  DrawData::DrawLabelInfo drawLabelInfo;
+  size_t j = 0;
+  auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
+  for (auto [i, vertexId] : v) {
+    assert(data_->table[i].vertex == vertexId);
+    int newIndex = dsu.findSet(vertexId);
+    int oldIndex = std::exchange(data_->table[i].index, newIndex);
+    if (oldIndex != newIndex) {
+      drawLabelInfo[j++] = {vertexId, oldIndex};
+    }
+  }
+  assert(j == 2);
+  label_animator_.startAnimation(drawLabelInfo);
+
+  const auto& edgesWithStatus = data->edgesWithInfo();
+  for (const auto& [edge, status] : edgesWithStatus) {
+    auto it
+        = std::ranges::find(data_->edges[edge.u], edge.v, &DrawEdge::vertexId);
+    assert(it != end(data_->edges[edge.u]));
+    QColor newStatus = palette_.edgeCountur(status);
+    if (std::exchange(it->contur, newStatus) != palette_.edgeCountur(status)) {
+      // animate add
+    }
+  }
+
   port_.notify();
 }
 
 int GeomModel::touchedItem_(const QPointF &position) const {
   assert(data_.has_value());
   auto v = std::views::values(data_->nodes);
-  auto it = std::ranges::find_if(v, [position](const auto &drawNode) {
+  auto it = std::ranges::find_if(v, [position](const auto& drawNode) {
     QPointF diff = drawNode.center - position;
     return std::sqrt(QPointF::dotProduct(diff, diff)) < drawNode.radius;
   });

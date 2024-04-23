@@ -111,12 +111,14 @@ LIBS += $$CONAN_LIBDIRS_QWT $$CONAN_LIBS_QWT
 
 SOURCES += \
   Interface/MainWindow.cpp \
+    Kernel/AlgorithmController.cpp \
+    Kernel/AlgorithmModel.cpp \
+  dialog.cpp \
   Interface/PlotController.cpp \
   Interface/View.cpp \
   Kernel/Graph.cpp \
   Kernel/DisjointSet.cpp \
-  Kernel/FieldController.cpp \
-  Kernel/FieldModel.cpp \
+  Kernel/Algorithm.cpp \
   Kernel/GeomModel.cpp \
   Kernel/Palette.cpp \
   Kernel/ItemAnimator.cpp \
@@ -135,13 +137,16 @@ SOURCES += \
 
 HEADERS += \
   Interface/MainWindow.h \
+  Kernel/AlgorithmAction.h \
+  Kernel/AlgorithmController.h \
+  Kernel/AlgorithmModel.h \
+  dialog.h \
   Interface/PlotController.h \
   Interface/View.h \
   Kernel/DrawData.h \
   Kernel/Graph.h \
   Kernel/DisjointSet.h \
-  Kernel/FieldController.h \
-  Kernel/FieldModel.h \
+  Kernel/Algorithm.h \
   Kernel/GeomModel.h \
   Kernel/MouseAction.h \
   Kernel/Palette.h \

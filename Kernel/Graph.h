@@ -12,15 +12,12 @@ public:
   using Weight = int;
 
   struct Edge {
-    VertexId u, v;
+    VertexId u;
+    VertexId v;
     Weight w;
-
-    friend bool operator<(const Edge &lhs, const Edge &rhs) {
-      return lhs.w < rhs.w;
-    }
   };
 
-  Graph();
+  Graph() = default;
 
   void addEdge(Edge e);
   void removeEdge(Edge e);
@@ -29,27 +26,25 @@ public:
   void removeVertex(VertexId u);
 
   size_t getVerticesCount() const;
-  int getCountEdges() const;
+  size_t getCountEdges() const;
 
   struct OutEdge {
     VertexId v;
     Weight w;
 
-    friend bool operator<(const OutEdge &lhs, const OutEdge &rhs) {
+    friend bool operator<(const OutEdge& lhs, const OutEdge& rhs) {
       return lhs.v < rhs.v;
     }
   };
 
   using AdjacentEdges = std::set<OutEdge>;
   using Container = std::unordered_map<VertexId, AdjacentEdges>;
-  using SortedEdges = std::vector<Edge>;
 
-  SortedEdges getSortedEdges() const;
   AdjacentEdges &adjacent(VertexId v);
   const AdjacentEdges &adjacent(VertexId v) const;
 
   Container AdjLists_;
-  int CountEdges_ = 0;
+  size_t CountEdges_ = 0;
 };
 
 } // namespace Kernel

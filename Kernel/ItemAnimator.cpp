@@ -8,54 +8,20 @@
 namespace QApp {
 namespace Kernel {
 
-ItemAnimator::ItemAnimator(Action f) : action_(std::move(f)) {
+LabelAnimator::LabelAnimator(Action f) : action_(std::move(f)) {
   assert(action_);
-  QObject::connect(&timer_, &QTimer::timeout, this, &ItemAnimator::onTimer);
+  QObject::connect(&timer_, &QTimer::timeout, this, &LabelAnimator::onTimer);
 }
 
-void ItemAnimator::startAnimation(const Graph& graph) {
-  graph_ = graph;
-  if (!active_) {
-    active_ = true;
-    step_ = 0;
-    for (const auto &[u, outEdge] : graph_.AdjLists_) {
-      dsu_.makeSet(u);
-    }
-
-    sortedEdges_ = graph_.getSortedEdges();
-  }
-
+void LabelAnimator::startAnimation(const DrawLabelInfo& info) {
+  action_(info);
+  active_ = true;
   using namespace std::chrono;
-  timer_.start(1000ms);
+  timer_.start(200ms);
 }
 
-void ItemAnimator::pauseAnimation() {
-  assert(active_);
+void LabelAnimator::onTimer() {
   timer_.stop();
-}
-
-void ItemAnimator::stopAnimation() {
-  active_ = false;
-  timer_.stop();
-  dsu_.clear();
-  sortedEdges_.clear();
-}
-
-void ItemAnimator::onTimer() {
-  if (active_ && step_ < graph_.getCountEdges()) {
-    Graph::Edge e = sortedEdges_[step_];
-    DrawEdge drawEdge = {e.v, e.w, QColorConstants::DarkGray};
-
-
-    if (dsu_.findSet(e.u) != dsu_.findSet(e.v)) {
-      dsu_.join(e.u, e.v);
-      drawEdge.contur = QColor("orange");
-    }
-
-    DrawData::DrawChangesTable changes = {{{e.u, dsu_.findSet(e.u)}, {e.v, dsu_.findSet(e.v)}}};
-    action_(e.u, drawEdge, changes);
-    ++step_;
-  }
 }
 
 } // namespace Kernel

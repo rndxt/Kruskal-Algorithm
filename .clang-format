@@ -3,7 +3,7 @@ BasedOnStyle: LLVM
 AllowShortFunctionsOnASingleLine : Empty
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBinaryOperators: All
-PointerAlignment: Right
+PointerAlignment: Left
 SpaceAfterTemplateKeyword: false
 SpacesInContainerLiterals: false
 IncludeBlocks: Regroup

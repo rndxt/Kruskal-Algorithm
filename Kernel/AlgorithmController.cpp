@@ -1,13 +1,13 @@
-#include "FieldController.h"
+#include "AlgorithmController.h"
 
-#include "FieldModel.h"
+#include "AlgorithmModel.h"
 
 #include <cassert>
 
 namespace QApp {
 namespace Kernel {
 
-FieldController::FieldController(FieldModel* model)
+FieldController::FieldController(AlgorithmModel* model)
     : host_(model),
       port_([this](ItemData&& data) { onItemData(std::move(data)); }) {
   assert(host_);
@@ -24,7 +24,7 @@ void FieldController::onItemData(ItemData&& data) {
 
 void FieldController::onItemAction(ItemAction action) {
   assert(host_);
-  host_->makeMove(action);
+  host_->makeNextStep();
 }
 
 } // namespace Kernel

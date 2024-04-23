@@ -1,36 +1,11 @@
 #include "Graph.h"
 
 #include <algorithm>
-#include <iterator>
 #include <cassert>
+#include <iterator>
 
 namespace QApp {
 namespace Kernel {
-
-Graph::Graph() {
-  for (int i = 0; i < 6; ++i)
-    addVertex(i);
-
-  addEdge({0, 1, 19});
-  addEdge({0, 2, 28});
-  addEdge({0, 3, 34});
-  addEdge({0, 4, 21});
-  addEdge({0, 5, 45});
-
-  addEdge({1, 2, 18});
-  addEdge({1, 3, 25});
-  addEdge({1, 4, 26});
-  addEdge({1, 5, 27});
-
-  addEdge({2, 3, 17});
-  addEdge({2, 4, 28});
-  addEdge({2, 5, 30});
-
-  addEdge({3, 4, 16});
-  addEdge({3, 5, 28});
-
-  addEdge({4, 5, 15});
-}
 
 void Graph::addEdge(Edge e) {
   assert(AdjLists_.contains(e.u));
@@ -77,23 +52,8 @@ size_t Graph::getVerticesCount() const {
   return AdjLists_.size();
 }
 
-int Graph::getCountEdges() const {
+size_t Graph::getCountEdges() const {
   return CountEdges_;
-}
-
-Graph::SortedEdges Graph::getSortedEdges() const {
-  SortedEdges sortedEdges;
-  for (const auto &[v, outEdges] : AdjLists_) {
-    std::transform(outEdges.upper_bound({v, 0}),
-                   end(outEdges),
-                   std::back_inserter(sortedEdges),
-                   [&u = v](OutEdge e) { return Edge{u, e.v, e.w}; });
-  }
-  std::ranges::sort(sortedEdges, {}, &Edge::w);
-
-  assert(ssize(sortedEdges) == CountEdges_
-         && "List of sorted edges by weight contains not all edges");
-  return sortedEdges;
 }
 
 Graph::AdjacentEdges &Graph::adjacent(VertexId vertexId) {
