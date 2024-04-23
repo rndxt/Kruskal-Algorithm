@@ -40,8 +40,12 @@ class View : public QObject {
   using EButtonStatus = Kernel::EButtonStatus;
   using ButtonAction = Kernel::ButtonAction;
   using ButtonData = std::optional<ButtonAction>;
-  using ObservableButton= Library::CObservableDataMono<ButtonData>;
+  using ObservableButton = Library::CObservableDataMono<ButtonData>;
   using ObserverButton= Library::CObserver<ButtonData>;
+
+  using SliderData = std::optional<int>;
+  using ObservableSlider = Library::CObservableDataMono<SliderData>;
+  using ObserverSlider = Library::CObserver<SliderData>;
 
 public:
   View();
@@ -50,6 +54,7 @@ public:
   ObserverState* port();
   void subscribe(ObserverMouse* obs);
   void subscribeRunButton(ObserverButton* obs);
+  void subscribeSlider(ObserverSlider* obs);
 
   QwtPlot* plot();
   QPushButton* editButton();
@@ -60,6 +65,7 @@ public:
 private Q_SLOTS:
   void onRunButtonClicked();
   void onEditButtonClicked();
+  void onSliderValueChanged(int value);
   void mousePressed(const QPointF& pos);
   void mouseMoved(const QPointF& pos);
   void mouseReleased(const QPointF& pos);
@@ -85,6 +91,7 @@ private:
   ObserverState in_port_;
   ObservableMouse out_port_;
   ObservableButton out_button_port_;
+  ObservableSlider slider_port_;
 };
 
 } // namespace Interface

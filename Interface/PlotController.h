@@ -24,11 +24,16 @@ class PlotController {
   using ButtonData = std::optional<ButtonAction>;
   using ObserverButton = Library::CObserver<ButtonData>;
 
+  using SliderData = std::optional<int>;
+  using ObservableSlider = Library::CObservableDataMono<SliderData>;
+  using ObserverSlider = Library::CObserver<SliderData>;
+
 public:
   PlotController(GeomModel* host);
 
   Observer* port();
   ObserverButton* buttonPort();
+  ObserverSlider* sliderPort();
 
 private:
   void control(MouseData&& data);
@@ -37,9 +42,13 @@ private:
   void controlButton(ButtonData&& data);
   void controlOnButtonData(const ButtonAction& action);
 
+  void controlSlider(SliderData&& data);
+  void controlOnSliderData(int action);
+
   GeomModel* host_;
   Observer port_;
   ObserverButton button_port_;
+  ObserverSlider slider_port_;
 };
 
 } // namespace Interface

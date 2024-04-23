@@ -32,6 +32,13 @@ View::View()
 
   QObject::connect(editButton_.get(), &QPushButton::clicked, this, &View::onEditButtonClicked);
   QObject::connect(runButton_.get(), &QPushButton::clicked, this, &View::onRunButtonClicked);
+  QObject::connect(slider_.get(), &QSlider::valueChanged, this,
+                   &View::onSliderValueChanged);
+
+  slider_.get()->setMinimum(1);
+  slider_.get()->setMaximum(4);
+  slider_.get()->setTickInterval(1);
+  slider_.get()->setTickPosition(QSlider::TicksBelow);
 
   table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
   table_->horizontalHeader()->setVisible(false);
@@ -54,6 +61,11 @@ void View::subscribe(ObserverMouse* obs) {
 void View::subscribeRunButton(ObserverButton* obs) {
   assert(obs);
   out_button_port_.subscribe(obs);
+}
+
+void View::subscribeSlider(ObserverSlider* obs) {
+  assert(obs);
+  slider_port_.subscribe(obs);
 }
 
 QwtPlot* View::plot() {
@@ -89,7 +101,7 @@ void View::mouseReleased(const QPointF& pos) {
 }
 
 void View::onRunButtonClicked() {
-  qDebug() << "run button clicked";
+  qDebug() << runButton_->text() << " button clicked";
   if (runButton_->text() == "Run") {
     runButton_->setText("Stop");
     out_button_port_.set(std::in_place_t(), EButtonStatus::RunAnimation);
@@ -102,6 +114,11 @@ void View::onRunButtonClicked() {
 
 void View::onEditButtonClicked() {
   qDebug() << "edit button clicked";
+}
+
+void View::onSliderValueChanged(int value) {
+  qDebug() << "slider changed";
+  slider_port_.set(std::in_place_t(), value);
 }
 
 void View::adjustPlot(QwtPlot* plot) {

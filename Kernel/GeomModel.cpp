@@ -14,6 +14,7 @@ GeomModel::GeomModel()
                             const DrawData::DrawNode& node2) {
         onAnimationNode(node1, node2);
       }),
+      algorithm_animator_([this]() { onAnimationStep(); }),
       in_port_(
           [this](AlgorithmData&& data) { onAlgorithmData(std::move(data)); }),
       next_step_port_(
@@ -65,15 +66,23 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
   switch (action.status) {
   case EButtonStatus::RunAnimation:
     action_port_.set(std::in_place_t(), 0, 0, 0);
-    // active_animator_.startAnimation();
+    algorithm_animator_.startAnimation();
     break;
   case EButtonStatus::PauseAnimation:
-    // active_animator_.pauseAnimation();
+    algorithm_animator_.pauseAnimation();
     break;
   default:
     assert(false);
     break;
   }
+}
+
+void GeomModel::handleSliderAction(int value) {
+  if (!data_.has_value())
+    return;
+  // algorithm_animator_.pauseAnimation();
+  algorithm_animator_.setSpeed(value);
+  // algorithm_animator_.startAnimation();
 }
 
 void GeomModel::onMousePress_(const QPointF& position) {
@@ -85,7 +94,8 @@ void GeomModel::onMousePress_(const QPointF& position) {
 
   active_index_ = vertexId;
   diff_ = position - data_->nodes[active_index_].center;
-  data_->nodes[active_index_].contur = palette_.nodeCountur(NodeStatus::Active);
+  prevContur_ = std::exchange(data_->nodes[active_index_].contur,
+                              palette_.nodeCountur(NodeStatus::Active));
   port_.notify();
 }
 
@@ -103,11 +113,14 @@ void GeomModel::onMouseRelease_(const QPointF& position) {
   if (active_index_ == k_non)
     return;
 
-  data_->nodes[active_index_].contur
-      = palette_.nodeCountur(NodeStatus::Inactive);
+  data_->nodes[active_index_].contur = prevContur_;
   port_.notify();
   diff_ = {0., 0.};
   active_index_ = k_non;
+}
+
+void GeomModel::onAnimationStep() {
+  action_port_.notify();
 }
 
 void GeomModel::onAnimationNode(const DrawData::DrawNode& node1,
@@ -116,25 +129,6 @@ void GeomModel::onAnimationNode(const DrawData::DrawNode& node1,
   data_->nodes[node2.id] = node2;
   port_.notify();
 }
-
-// void GeomModel::onActiveAnimation_(int vertexId,
-//                                    const DrawData::DrawEdge& drawEdge,
-//                                    const DrawData::DrawChangesTable&
-//                                    drawTable) {
-//   assert(data_.has_value());
-// for (auto [vertex, index] : drawTable) {
-//   data_->table[vertex] = index;
-// }
-
-// data_->nodes[vertexId].contur = QColor("orange");
-// data_->nodes[drawEdge.vertexId].contur = QColor("orange");
-// auto it = std::ranges::lower_bound(data_->edges[vertexId],
-// drawEdge.vertexId,
-//                                    {}, &DrawData::DrawEdge::vertexId);
-// assert(it != end(data_->edges[vertexId]));
-// it->contur = drawEdge.contur;
-//   port_.notify();
-// }
 
 void GeomModel::onAlgorithmData(AlgorithmData&& data) {
   if (!data.has_value()) {

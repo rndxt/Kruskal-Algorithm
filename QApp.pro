@@ -111,6 +111,7 @@ LIBS += $$CONAN_LIBDIRS_QWT $$CONAN_LIBS_QWT
 
 SOURCES += \
   Interface/MainWindow.cpp \
+    Kernel/AlgorithmAnimator.cpp \
     Kernel/AlgorithmController.cpp \
     Kernel/AlgorithmModel.cpp \
     Kernel/NodeAnimator.cpp \
@@ -138,6 +139,7 @@ SOURCES += \
 HEADERS += \
   Interface/MainWindow.h \
   Kernel/AlgorithmAction.h \
+  Kernel/AlgorithmAnimator.h \
   Kernel/AlgorithmController.h \
   Kernel/AlgorithmModel.h \
   Kernel/NodeAnimator.h \

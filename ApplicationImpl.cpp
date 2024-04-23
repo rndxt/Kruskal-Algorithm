@@ -9,6 +9,7 @@ ApplicationImpl::ApplicationImpl()
   geom_model_.subscribeToDrawData(view()->port());
   view()->subscribe(controller_.port());
   view()->subscribeRunButton(controller_.buttonPort());
+  view()->subscribeSlider(controller_.sliderPort());
   mainWindow()->show();
 }
 
