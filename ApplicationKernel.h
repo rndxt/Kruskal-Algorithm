@@ -17,7 +17,7 @@ public:
 protected:
   AlgorithmModel model_;
   GeomModel geom_model_;
-  AlgorithmController field_controller_;
+  AlgorithmController algorithm_controller_;
 };
 
 } // namespace QApp

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Interface/MainWindow.h"
-#include "Interface/PlotController.h"
 #include "Interface/View.h"
 
 namespace QApp {

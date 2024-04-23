@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Algorithm.h"
+#include "EdgeStatus.h"
 
 #include <QColor>
 #include <QPointF>
@@ -20,18 +20,6 @@ struct NodeStatusF {
   }
 
   static NodeStatus fromInt(int);
-};
-
-struct EdgeStatusF {
-  static constexpr int toIndex(EdgeStatus status) {
-    return static_cast<int>(status);
-  }
-
-  static constexpr int size() {
-    return toIndex(EdgeStatus::Unknown) + 1;
-  }
-
-  static EdgeStatus fromInt(int);
 };
 
 struct Palette {

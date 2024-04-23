@@ -2,6 +2,7 @@
 
 #include "ApplicationGUI.h"
 #include "ApplicationKernel.h"
+#include "Interface/PlotController.h"
 
 namespace QApp {
 
