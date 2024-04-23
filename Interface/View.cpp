@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QFont>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QPainterPath>
 #include <QPen>
 #include <cassert>
@@ -68,6 +69,11 @@ void View::subscribeSlider(ObserverSlider* obs) {
   slider_port_.subscribe(obs);
 }
 
+void View::subscribeNewModel(ObserverRepres* obs) {
+  assert(obs);
+  repr_port_.subscribe(obs);
+}
+
 QwtPlot* View::plot() {
   return plot_.get();
 }
@@ -114,6 +120,52 @@ void View::onRunButtonClicked() {
 
 void View::onEditButtonClicked() {
   qDebug() << "edit button clicked";
+  bool ok;
+  QString text;
+  ValidationResult res;
+  do {
+    text = QInputDialog::getMultiLineText(
+        plot_.get(), "Edit graph",
+        "Enter graph in Adjacency List notation, start with zero:", "", &ok);
+    if (!ok)
+      return;
+
+  } while (text.isEmpty() || !(res = isUserInputValid(text), res.has_value()));
+  repr_port_.set(std::in_place_t(), *res);
+}
+
+View::ValidationResult View::isUserInputValid(const QString& userInput) {
+  auto lines = userInput.split(u'\n', Qt::SkipEmptyParts);
+  auto firstLine = lines[0].split(u' ', Qt::SkipEmptyParts);
+  std::vector<std::vector<int>> result;
+  result.resize(lines.size());
+  result[0].reserve(2);
+  if (firstLine.size() != 2)
+    return {};
+
+  for (auto& part : firstLine) {
+    if (!part.contains(QRegExp("[1-9][0-9]*"))) {
+      return {};
+    }
+    result[0].push_back(part.toInt());
+  }
+
+  for (int i = 1; i < lines.size(); ++i) {
+    result[i].reserve(3);
+    auto parts = lines[i].split(u' ');
+
+    if (parts.size() != 3) {
+      return {};
+    }
+
+    for (auto& part : parts) {
+      if (!part.contains(QRegExp("0|[1-9][0-9]*"))) {
+        return {};
+      }
+      result[i].push_back(part.toInt());
+    }
+  }
+  return result;
 }
 
 void View::onSliderValueChanged(int value) {

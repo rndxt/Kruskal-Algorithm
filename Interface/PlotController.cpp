@@ -15,7 +15,8 @@ PlotController::PlotController(GeomModel* host)
       button_port_(
           [this](ButtonData&& data) { controlButton(std::move(data)); }),
       slider_port_(
-          [this](SliderData&& data) { controlSlider(std::move(data)); }) {
+          [this](SliderData&& data) { controlSlider(std::move(data)); }),
+      repr_port_([this](ModelData&& data) { controlRepr(std::move(data)); }) {
   assert(host_);
 }
 
@@ -29,6 +30,10 @@ PlotController::ObserverButton* PlotController::buttonPort() {
 
 PlotController::ObserverSlider* PlotController::sliderPort() {
   return &slider_port_;
+}
+
+PlotController::ObserverModel* PlotController::reprPort() {
+  return &repr_port_;
 }
 
 void PlotController::control(MouseData&& data) {
@@ -56,6 +61,16 @@ void PlotController::controlSlider(SliderData&& data) {
 
 void PlotController::controlOnSliderData(int action) {
   host_->handleSliderAction(action);
+}
+
+void PlotController::controlRepr(ModelData&& data) {
+  if (data.has_value())
+    controlOnReprData(*data);
+}
+
+void PlotController::controlOnReprData(
+    const std::vector<std::vector<int>>& action) {
+  host_->handleReprAction(action);
 }
 
 } // namespace Interface

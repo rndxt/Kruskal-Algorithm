@@ -1,8 +1,6 @@
 #include "Graph.h"
 
-#include <algorithm>
 #include <cassert>
-#include <iterator>
 
 namespace QApp {
 namespace Kernel {
@@ -10,9 +8,9 @@ namespace Kernel {
 void Graph::addEdge(Edge e) {
   assert(AdjLists_.contains(e.u));
   assert(AdjLists_.contains(e.v));
-  auto p = adjacent(e.u).insert({e.v, e.w});
-  if (p.second) {
-    adjacent(e.v).insert({e.u, e.w});
+  auto p1 = adjacent(e.u).insert({e.v, e.w});
+  auto p2 = adjacent(e.v).insert({e.u, e.w});
+  if (p1.second && p2.second) {
     CountEdges_ += 1;
   }
 }

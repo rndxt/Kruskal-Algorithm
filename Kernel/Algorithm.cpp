@@ -57,5 +57,37 @@ void Algorithm::doNextStep() {
   }
 }
 
+void Algorithm::replaceModel(const std::vector<std::vector<int>>& newModel) {
+  dsu_.clear();
+  graph_.AdjLists_.clear();
+  graph_.CountEdges_ = 0;
+  sortedEdges_.clear();
+
+  assert(newModel.size() > 1);
+  assert(newModel[0].size() == 2);
+
+  int verticies = newModel[0][0];
+  int countEdges = newModel[0][1];
+  for (int i = 0; i < verticies; ++i) {
+    graph_.addVertex(i);
+    dsu_.makeSet(i);
+  }
+
+  sortedEdges_.reserve(countEdges);
+  for (size_t i = 1; i < newModel.size(); ++i) {
+    assert(newModel[i].size() == 3);
+    Edge edge = {newModel[i][0], newModel[i][1], newModel[i][2]};
+    graph_.addEdge(edge);
+    sortedEdges_.emplace_back(edge, EdgeStatus::Unknown);
+  }
+
+  std::ranges::sort(
+      sortedEdges_,
+      [](const Edge& lhs, const Edge& rhs) { return lhs.w < rhs.w; },
+      &EdgeWithStatus::edge);
+
+  assert(graph_.getCountEdges() == sortedEdges_.size());
+}
+
 } // namespace Kernel
 } // namespace QApp

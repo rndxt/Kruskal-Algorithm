@@ -85,6 +85,12 @@ void GeomModel::handleSliderAction(int value) {
   // algorithm_animator_.startAnimation();
 }
 
+void GeomModel::handleReprAction(const std::vector<std::vector<int>>& action) {
+  if (!data_.has_value())
+    return;
+  new_model_port_.set(std::in_place_t(), action);
+}
+
 void GeomModel::onMousePress_(const QPointF& position) {
   assert(data_.has_value());
 

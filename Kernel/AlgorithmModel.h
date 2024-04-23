@@ -19,6 +19,7 @@ public:
   void subscribe(ObserverAlgorithm* obs);
   void subscribeToNextStep(ObserverAlgorithm* obs);
   void makeNextStep();
+  void replaceModel(const std::vector<std::vector<int>>& newModel);
 
 private:
   AlgorithmData algorithm_;

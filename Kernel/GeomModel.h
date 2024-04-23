@@ -29,19 +29,24 @@ class GeomModel {
   using ObservableAction = Library::CObservableDataMono<ItemData>;
   using ObserverAction = Library::CObserver<ItemData>;
 
+  using ModelData = std::optional<std::vector<std::vector<int>>>;
+  using ObservableModel = Library::CObservableDataMono<ModelData>;
+  using ObserverModel = Library::CObserver<ModelData>;
+
 public:
   GeomModel();
 
   ObserverAlgorithm* port();
   ObserverAlgorithm* nextStepPort();
+
   void subscribeToDrawData(Observer* obs);
   void subscribeToItemAction(ObserverAction* obs);
 
   void handleMouseAction(const MouseAction& action);
   void handleButtonAction(const ButtonAction& action);
   void handleSliderAction(int value);
+  void handleReprAction(const std::vector<std::vector<int>>& action);
 
-private:
   void onMousePress_(const QPointF& position);
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
@@ -66,6 +71,7 @@ private:
   ObserverAlgorithm in_port_;
   ObserverAlgorithm next_step_port_;
   ObservableAction action_port_;
+  ObservableModel new_model_port_;
 };
 
 } // namespace Kernel

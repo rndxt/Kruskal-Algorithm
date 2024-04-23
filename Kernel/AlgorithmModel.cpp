@@ -25,5 +25,13 @@ void AlgorithmModel::makeNextStep() {
   next_step_port_.notify();
 }
 
+void AlgorithmModel::replaceModel(
+    const std::vector<std::vector<int>>& newModel) {
+  if (!algorithm_.has_value())
+    return;
+  algorithm_->replaceModel(newModel);
+  port_.notify();
+}
+
 } // namespace Kernel
 } // namespace QApp

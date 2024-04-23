@@ -47,6 +47,11 @@ class View : public QObject {
   using ObservableSlider = Library::CObservableDataMono<SliderData>;
   using ObserverSlider = Library::CObserver<SliderData>;
 
+  using GraphRepres = std::vector<std::vector<int>>;
+  using ValidationResult = std::optional<GraphRepres>;
+  using ObservableRepres = Library::CObservableDataMono<ValidationResult>;
+  using ObserverRepres = Library::CObserver<ValidationResult>;
+
 public:
   View();
   ~View();
@@ -55,6 +60,7 @@ public:
   void subscribe(ObserverMouse* obs);
   void subscribeRunButton(ObserverButton* obs);
   void subscribeSlider(ObserverSlider* obs);
+  void subscribeNewModel(ObserverRepres* obs);
 
   QwtPlot* plot();
   QPushButton* editButton();
@@ -74,6 +80,7 @@ private:
   static void adjustPlot(QwtPlot*);
   void setPicker(QwtPlotPicker*);
 
+  ValidationResult isUserInputValid(const QString& userInput);
   void drawData(Data&& data);
   void clear();
   void draw(const DrawData& data);
@@ -92,6 +99,7 @@ private:
   ObservableMouse out_port_;
   ObservableButton out_button_port_;
   ObservableSlider slider_port_;
+  ObservableRepres repr_port_;
 };
 
 } // namespace Interface

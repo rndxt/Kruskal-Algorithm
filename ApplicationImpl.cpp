@@ -10,6 +10,7 @@ ApplicationImpl::ApplicationImpl()
   view()->subscribe(controller_.port());
   view()->subscribeRunButton(controller_.buttonPort());
   view()->subscribeSlider(controller_.sliderPort());
+  view()->subscribeNewModel(controller_.reprPort());
   mainWindow()->show();
 }
 

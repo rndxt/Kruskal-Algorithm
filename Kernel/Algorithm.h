@@ -1,12 +1,11 @@
 #pragma once
 
 #include "DisjointSet.h"
+#include "EdgeStatus.h"
 #include "Graph.h"
 
 namespace QApp {
 namespace Kernel {
-
-enum class EdgeStatus : int { InMst, NotInMst, Unknown };
 
 class Algorithm {
 public:
@@ -23,6 +22,7 @@ public:
   const DisjointSet& dsu() const;
   const std::vector<EdgeWithStatus>& edgesWithInfo() const;
   void doNextStep();
+  void replaceModel(const std::vector<std::vector<int>>& newModel);
 
 private:
   Graph graph_;
