@@ -27,6 +27,7 @@ class View : public QObject {
   using DrawData = Kernel::DrawData;
   using DrawNode = DrawData::DrawNode;
   using DrawEdge = DrawData::DrawEdge;
+  using DrawTable = DrawData::DrawTable;
 
   using Data = std::optional<DrawData>;
   using ObserverState = Library::CObserver<Data>;
@@ -80,10 +81,13 @@ private:
   static void adjustPlot(QwtPlot*);
   void setPicker(QwtPlotPicker*);
 
+  static void adjustTable(QTableWidget*);
+
   ValidationResult isUserInputValid(const QString& userInput);
   void drawData(Data&& data);
   void clear();
   void draw(const DrawData& data);
+  void drawTable(const DrawTable& table);
   void drawNode(const DrawNode& node);
   void drawEdge(const DrawNode& first, const DrawNode& second,
                 const DrawEdge& outEdge);

@@ -20,7 +20,7 @@ void NodeAnimator::startAnimation(const DrawNode& node1,
   current_2.contur = Qt::white;
   action_(current_1, current_2);
   using namespace std::chrono;
-  timer_.start(400ms);
+  timer_.start(defaultTime);
 }
 
 void NodeAnimator::onTimer() {

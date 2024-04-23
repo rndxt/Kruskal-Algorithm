@@ -23,7 +23,8 @@ struct NodeStatusF {
 };
 
 struct Palette {
-  double field_hight = 2.;
+  QPointF plot_center = {400., 300.};
+  double radius = 100.;
   double field_width = 3.;
   QPointF field_origin = {1., 2.};
 

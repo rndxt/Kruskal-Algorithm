@@ -22,6 +22,8 @@ struct DrawData {
     int index;
   };
 
+  using DrawTable = std::vector<DrawTableItem>;
+
   struct DrawNode {
     QPointF center;
     double radius;
@@ -37,7 +39,7 @@ struct DrawData {
 
   std::unordered_map<int, DrawNode> nodes;
   std::unordered_map<int, std::vector<DrawEdge>> edges;
-  std::vector<DrawTableItem> table;
+  DrawTable table;
   DrawLabelInfo labelInfo;
 };
 

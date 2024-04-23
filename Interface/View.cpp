@@ -30,6 +30,7 @@ View::View()
   assert(plot_);
   adjustPlot(plot_.get());
   setPicker(picker_);
+  adjustTable(table_.get());
 
   QObject::connect(editButton_.get(), &QPushButton::clicked, this, &View::onEditButtonClicked);
   QObject::connect(runButton_.get(), &QPushButton::clicked, this, &View::onRunButtonClicked);
@@ -40,12 +41,6 @@ View::View()
   slider_.get()->setMaximum(4);
   slider_.get()->setTickInterval(1);
   slider_.get()->setTickPosition(QSlider::TicksBelow);
-
-  table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  table_->horizontalHeader()->setVisible(false);
-  table_->setRowCount(2);
-  table_->setVerticalHeaderLabels({"Vertex", "index"});
-  table_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
 
 View::~View() = default;
@@ -188,6 +183,14 @@ void View::setPicker(QwtPlotPicker* picker) {
                    this, &View::mouseReleased);
 }
 
+void View::adjustTable(QTableWidget* table) {
+  table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  table->horizontalHeader()->setVisible(false);
+  table->setRowCount(2);
+  table->setVerticalHeaderLabels({"Vertex", "index"});
+  table->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+}
+
 void View::drawData(Data&& data) {
   if (data.has_value()) {
     draw(*data);
@@ -202,13 +205,7 @@ void View::clear() {
 }
 
 void View::draw(const DrawData& data) {
-  table_->setColumnCount(size(data.table));
-  for (size_t column = 0; auto [vertex, up] : data.table) {
-    table_->setItem(0, column, new QTableWidgetItem(QString::number(vertex)));
-    table_->setItem(1, column, new QTableWidgetItem(QString::number(up)));
-    column += 1;
-  }
-  table_->resizeColumnsToContents();
+  drawTable(data.table);
 
   plot_->detachItems();
   std::ranges::for_each(std::views::values(data.nodes),
@@ -226,6 +223,16 @@ void View::draw(const DrawData& data) {
     }
   }
   plot_->replot();
+}
+
+void View::drawTable(const DrawTable& table) {
+  table_->setColumnCount(size(table));
+  for (size_t column = 0; auto [vertex, up] : table) {
+    table_->setItem(0, column, new QTableWidgetItem(QString::number(vertex)));
+    table_->setItem(1, column, new QTableWidgetItem(QString::number(up)));
+    column += 1;
+  }
+  table_->resizeColumnsToContents();
 }
 
 void View::drawNode(const DrawNode& node) {

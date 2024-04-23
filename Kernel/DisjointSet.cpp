@@ -7,13 +7,13 @@
 namespace QApp {
 namespace Kernel {
 
-void DisjointSet::makeSet(DisjointSet::Element elem) {
+void DisjointSet::makeSet(Element elem) {
   assert(!Sets_.contains(elem));
   Sets_.insert({elem, elem});
   CountSets_ += 1;
 }
 
-void DisjointSet::join(DisjointSet::Element lhs, DisjointSet::Element rhs) {
+void DisjointSet::join(Element lhs, Element rhs) {
   Element represenLhs = findSet(lhs);
   Element represenRhs = findSet(rhs);
   Sets_[represenLhs] = represenRhs;
@@ -22,7 +22,7 @@ void DisjointSet::join(DisjointSet::Element lhs, DisjointSet::Element rhs) {
   assert(CountSets_ > 0);
 }
 
-DisjointSet::Element DisjointSet::findSet(DisjointSet::Element elem) const {
+DisjointSet::Element DisjointSet::findSet(Element elem) const {
   assert(Sets_.contains(elem));
   while (elem != getParent(elem)) {
     elem = getParent(getParent(elem));
@@ -35,7 +35,7 @@ int DisjointSet::getCountSets() const {
   return CountSets_;
 }
 
-DisjointSet::Element DisjointSet::getParent(DisjointSet::Element elem) const {
+DisjointSet::Element DisjointSet::getParent(Element elem) const {
   assert(Sets_.contains(elem));
   return Sets_.find(elem)->second;
 }

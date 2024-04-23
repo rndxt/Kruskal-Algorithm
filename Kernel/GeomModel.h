@@ -51,8 +51,7 @@ public:
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
   void onAnimationStep();
-  void onAnimationNode(const DrawData::DrawNode& node1,
-                       const DrawData::DrawNode& node2);
+  void onAnimationNode(const DrawNode& node1, const DrawNode& node2);
   void onAlgorithmData(AlgorithmData&& data);
   void onNextStepData(AlgorithmData&& data);
 
@@ -67,7 +66,7 @@ public:
   int active_index_ = k_non;
   QPointF diff_ = {0., 0.};
   QColor prevContur_ = Qt::black;
-  Observable port_ = [this]() -> const Data& { return data_; };
+  Observable port_;
   ObserverAlgorithm in_port_;
   ObserverAlgorithm next_step_port_;
   ObservableAction action_port_;

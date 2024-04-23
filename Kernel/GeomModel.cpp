@@ -15,6 +15,7 @@ GeomModel::GeomModel()
         onAnimationNode(node1, node2);
       }),
       algorithm_animator_([this]() { onAnimationStep(); }),
+      port_([this]() -> const Data& { return data_; }),
       in_port_(
           [this](AlgorithmData&& data) { onAlgorithmData(std::move(data)); }),
       next_step_port_(
@@ -129,8 +130,7 @@ void GeomModel::onAnimationStep() {
   action_port_.notify();
 }
 
-void GeomModel::onAnimationNode(const DrawData::DrawNode& node1,
-                                const DrawData::DrawNode& node2) {
+void GeomModel::onAnimationNode(const DrawNode& node1, const DrawNode& node2) {
   data_->nodes[node1.id] = node1;
   data_->nodes[node2.id] = node2;
   port_.notify();
@@ -159,17 +159,17 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
     data_->table.emplace_back(vertexId, dsu.findSet(vertexId));
   }
 
-  constexpr double xc = 400.;
-  constexpr double yc = 300.;
-  constexpr double R = 100;
   size_t countVertices = graph.getVerticesCount();
 
   auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
   for (auto [i, vertex] : v) {
     double angle = 2 * std::numbers::pi * i / countVertices;
-    QPointF center = {xc + R * std::cos(angle), yc + R * std::sin(angle)};
-    data_->nodes.emplace(vertex,
-                         DrawData::DrawNode{center, 10, Qt::black, vertex});
+    QPointF center
+        = {palette_.plot_center.x() + palette_.radius * std::cos(angle),
+           palette_.plot_center.y() + palette_.radius * std::sin(angle)};
+    data_->nodes.emplace(
+        vertex,
+        DrawData::DrawNode{center, palette_.node_radius, Qt::black, vertex});
   }
 
   for (const auto& [vertex, outEdges] : graph.AdjLists_) {
@@ -213,7 +213,7 @@ int GeomModel::touchedItem_(const QPointF &position) const {
   auto v = std::views::values(data_->nodes);
   auto it = std::ranges::find_if(v, [position](const auto& drawNode) {
     QPointF diff = drawNode.center - position;
-    return std::sqrt(QPointF::dotProduct(diff, diff)) < drawNode.radius;
+    return std::sqrt(QPointF::dotProduct(diff, diff)) < 10.;
   });
 
   if (it == end(v))

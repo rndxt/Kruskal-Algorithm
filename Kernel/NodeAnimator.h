@@ -29,6 +29,8 @@ private Q_SLOTS:
   void onTimer();
 
 private:
+  using milliseconds = std::chrono::milliseconds;
+  static constexpr milliseconds defaultTime = milliseconds{400};
   Action action_;
   DrawNode current_1;
   DrawNode current_2;
