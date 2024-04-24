@@ -115,6 +115,8 @@ void View::onRunButtonClicked() {
 
 void View::onEditButtonClicked() {
   qDebug() << "edit button clicked";
+  runButton_->setText("Run");
+  out_button_port_.set(std::in_place_t(), EButtonStatus::PauseAnimation);
   bool ok;
   QString text;
   ValidationResult res;

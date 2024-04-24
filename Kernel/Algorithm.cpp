@@ -58,6 +58,7 @@ void Algorithm::doNextStep() {
 }
 
 void Algorithm::replaceModel(const std::vector<std::vector<int>>& newModel) {
+  step_ = 0;
   dsu_.clear();
   graph_.AdjLists_.clear();
   graph_.CountEdges_ = 0;
