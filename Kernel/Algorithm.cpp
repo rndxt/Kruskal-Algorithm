@@ -71,12 +71,13 @@ Algorithm Algorithm::defaultExample() {
          {1, 2, 18}, {1, 3, 25}, {1, 4, 26}, {1, 5, 27}, {2, 3, 17},
          {2, 4, 28}, {2, 5, 30}, {3, 4, 19}, {3, 5, 28}, {4, 5, 15}};
   Algorithm example;
-  example.buildModelByEdges(edges);
+  example.buildModelByEdges(6, edges);
   return example;
 }
 
-void Algorithm::buildModelByEdges(const std::vector<Edge>& edges) {
-  for (int i = 0; i < 6; ++i) {
+void Algorithm::buildModelByEdges(int countVertices,
+                                  const std::vector<Edge>& edges) {
+  for (int i = 0; i < countVertices; ++i) {
     graph_.addVertex(i);
     dsu_.makeSet(i);
   }

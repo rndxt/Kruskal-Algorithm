@@ -27,7 +27,7 @@ public:
   static Algorithm defaultExample();
 
 private:
-  void buildModelByEdges(const std::vector<Edge>& edges);
+  void buildModelByEdges(int countVertices, const std::vector<Edge>& edges);
 
   size_t step_ = 0;
   Graph graph_;
