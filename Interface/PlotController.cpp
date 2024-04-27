@@ -9,7 +9,7 @@
 namespace QApp {
 namespace Interface {
 
-PlotController::PlotController(GeomModel* host)
+AlgorithmController::AlgorithmController(GeomModel* host)
     : host_(host),
       port_([this](MouseData&& data) { control(std::move(data)); }),
       button_port_(
@@ -20,55 +20,55 @@ PlotController::PlotController(GeomModel* host)
   assert(host_);
 }
 
-PlotController::Observer* PlotController::port() {
+AlgorithmController::Observer* AlgorithmController::port() {
   return &port_;
 }
 
-PlotController::ObserverButton* PlotController::buttonPort() {
+AlgorithmController::ObserverButton* AlgorithmController::buttonPort() {
   return &button_port_;
 }
 
-PlotController::ObserverSlider* PlotController::sliderPort() {
+AlgorithmController::ObserverSlider* AlgorithmController::sliderPort() {
   return &slider_port_;
 }
 
-PlotController::ObserverModel* PlotController::reprPort() {
+AlgorithmController::ObserverModel* AlgorithmController::reprPort() {
   return &repr_port_;
 }
 
-void PlotController::control(MouseData&& data) {
+void AlgorithmController::control(MouseData&& data) {
   if (data.has_value())
     controlOnData(*data);
 }
 
-void PlotController::controlOnData(const MouseAction& action) {
+void AlgorithmController::controlOnData(const MouseAction& action) {
   host_->handleMouseAction(action);
 }
 
-void PlotController::controlButton(ButtonData&& data) {
+void AlgorithmController::controlButton(ButtonData&& data) {
   if (data.has_value())
     controlOnButtonData(*data);
 }
 
-void PlotController::controlOnButtonData(const ButtonAction& action) {
+void AlgorithmController::controlOnButtonData(const ButtonAction& action) {
   host_->handleButtonAction(action);
 }
 
-void PlotController::controlSlider(SliderData&& data) {
+void AlgorithmController::controlSlider(SliderData&& data) {
   if (data.has_value())
     controlOnSliderData(*data);
 }
 
-void PlotController::controlOnSliderData(int action) {
+void AlgorithmController::controlOnSliderData(int action) {
   host_->handleSliderAction(action);
 }
 
-void PlotController::controlRepr(ModelData&& data) {
+void AlgorithmController::controlRepr(ModelData&& data) {
   if (data.has_value())
     controlOnReprData(*data);
 }
 
-void PlotController::controlOnReprData(
+void AlgorithmController::controlOnReprData(
     const std::vector<std::vector<int>>& action) {
   host_->handleReprAction(action);
 }

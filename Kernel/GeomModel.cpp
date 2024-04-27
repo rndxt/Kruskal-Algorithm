@@ -81,9 +81,7 @@ void GeomModel::handleButtonAction(const ButtonAction& action) {
 void GeomModel::handleSliderAction(int value) {
   if (!data_.has_value())
     return;
-  // algorithm_animator_.pauseAnimation();
   algorithm_animator_.setSpeed(value);
-  // algorithm_animator_.startAnimation();
 }
 
 void GeomModel::handleReprAction(const std::vector<std::vector<int>>& action) {

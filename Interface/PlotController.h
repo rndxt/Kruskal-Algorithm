@@ -12,7 +12,7 @@ class GeomModel;
 
 namespace Interface {
 
-class PlotController {
+class AlgorithmController {
   using GeomModel = Kernel::GeomModel;
   using EMouseStatus = Kernel::EMouseStatus;
   using MouseAction = Kernel::MouseAction;
@@ -33,7 +33,7 @@ class PlotController {
   using ObserverModel = Library::CObserver<ModelData>;
 
 public:
-  PlotController(GeomModel* host);
+  AlgorithmController(GeomModel* host);
 
   Observer* port();
   ObserverButton* buttonPort();

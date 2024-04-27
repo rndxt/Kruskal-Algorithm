@@ -7,7 +7,7 @@
 namespace QApp {
 
 class ApplicationImpl : protected ApplicationKernel, protected ApplicationGUI {
-  using PlotController = Interface::PlotController;
+  using PlotController = Interface::AlgorithmController;
 
 public:
   ApplicationImpl();
