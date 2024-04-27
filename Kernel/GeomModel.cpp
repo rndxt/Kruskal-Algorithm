@@ -39,6 +39,11 @@ void GeomModel::subscribeToItemAction(ObserverAction* obs) {
   action_port_.subscribe(obs);
 }
 
+void GeomModel::subscribeToNewModel(ObserverModel* obs) {
+  assert(obs);
+  new_model_port_.subscribe(obs);
+}
+
 void GeomModel::handleMouseAction(const MouseAction& action) {
   if (!data_.has_value())
     return;
@@ -93,7 +98,7 @@ void GeomModel::handleReprAction(const std::vector<std::vector<int>>& action) {
 void GeomModel::onMousePress_(const QPointF& position) {
   assert(data_.has_value());
 
-  int vertexId = touchedItem_(position);
+  int vertexId = touchedNode_(position);
   if (vertexId == k_non)
     return;
 
@@ -206,7 +211,7 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
   port_.notify();
 }
 
-int GeomModel::touchedItem_(const QPointF &position) const {
+int GeomModel::touchedNode_(const QPointF& position) const {
   assert(data_.has_value());
   auto v = std::views::values(data_->nodes);
   auto it = std::ranges::find_if(v, [position](const auto& drawNode) {

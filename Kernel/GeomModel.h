@@ -41,6 +41,7 @@ public:
 
   void subscribeToDrawData(Observer* obs);
   void subscribeToItemAction(ObserverAction* obs);
+  void subscribeToNewModel(ObserverModel* obs);
 
   void handleMouseAction(const MouseAction& action);
   void handleButtonAction(const ButtonAction& action);
@@ -55,7 +56,8 @@ public:
   void onAlgorithmData(AlgorithmData&& data);
   void onNextStepData(AlgorithmData&& data);
 
-  int touchedItem_(const QPointF& position) const;
+private:
+  int touchedNode_(const QPointF& position) const;
 
   static constexpr int k_non = -1;
 

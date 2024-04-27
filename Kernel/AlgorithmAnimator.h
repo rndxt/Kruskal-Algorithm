@@ -1,8 +1,5 @@
 #pragma once
 
-#include "DrawData.h"
-
-#include <QColor>
 #include <QTimer>
 #include <chrono>
 #include <functional>

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <array>
-#include <cstdint>
-
 namespace QApp {
 namespace Kernel {
 

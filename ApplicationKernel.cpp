@@ -8,7 +8,7 @@ ApplicationKernel::ApplicationKernel()
   model_.subscribeToNextStep(geom_model_.nextStepPort());
   geom_model_.subscribeToItemAction(algorithm_controller_.port());
   geom_model_.subscribeToItemAction(algorithm_controller_.port());
-  geom_model_.new_model_port_.subscribe(&algorithm_controller_.model_port_);
+  geom_model_.subscribeToNewModel(&algorithm_controller_.model_port_);
 }
 
 } // namespace QApp
