@@ -54,6 +54,15 @@ size_t Graph::getCountEdges() const {
   return CountEdges_;
 }
 
+void Graph::clear() {
+  AdjLists_.clear();
+  CountEdges_ = 0;
+}
+
+Graph::VertexView Graph::vertexView() const {
+  return AdjLists_ | std::views::keys;
+}
+
 Graph::AdjacentEdges &Graph::adjacent(VertexId vertexId) {
   assert(AdjLists_.contains(vertexId));
   return AdjLists_.find(vertexId)->second;

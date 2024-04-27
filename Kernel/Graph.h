@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ranges>
 #include <set>
 #include <unordered_map>
 
@@ -11,23 +12,7 @@ public:
   using VertexId = int;
   using Weight = int;
 
-  struct Edge {
-    VertexId u;
-    VertexId v;
-    Weight w;
-  };
-
-  Graph() = default;
-
-  void addEdge(Edge e);
-  void removeEdge(Edge e);
-
-  void addVertex(VertexId u);
-  void removeVertex(VertexId u);
-
-  size_t getVerticesCount() const;
-  size_t getCountEdges() const;
-
+private:
   struct OutEdge {
     VertexId v;
     Weight w;
@@ -40,8 +25,32 @@ public:
   using AdjacentEdges = std::set<OutEdge>;
   using Container = std::unordered_map<VertexId, AdjacentEdges>;
 
-  AdjacentEdges &adjacent(VertexId v);
-  const AdjacentEdges &adjacent(VertexId v) const;
+public:
+  using VertexView
+      = std::ranges::keys_view<std::ranges::ref_view<const Container>>;
+
+  struct Edge {
+    VertexId u;
+    VertexId v;
+    Weight w;
+  };
+
+  Graph() = default;
+
+  void addEdge(Edge e);
+  void removeEdge(Edge e);
+  void addVertex(VertexId u);
+  void removeVertex(VertexId u);
+
+  size_t getVerticesCount() const;
+  size_t getCountEdges() const;
+
+  VertexView vertexView() const;
+  const AdjacentEdges& adjacent(VertexId v) const;
+  void clear();
+
+private:
+  AdjacentEdges& adjacent(VertexId v);
 
   Container AdjLists_;
   size_t CountEdges_ = 0;

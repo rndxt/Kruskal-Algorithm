@@ -35,8 +35,7 @@ void Algorithm::doNextStep() {
 void Algorithm::replaceModel(const std::vector<std::vector<int>>& newModel) {
   step_ = 0;
   dsu_.clear();
-  graph_.AdjLists_.clear();
-  graph_.CountEdges_ = 0;
+  graph_.clear();
   sortedEdges_.clear();
 
   assert(newModel.size() > 1);
@@ -92,7 +91,7 @@ void Algorithm::buildModelByEdges(int countVertices,
       [](const Edge& lhs, const Edge& rhs) { return lhs.w < rhs.w; },
       &EdgeWithStatus::edge);
 
-  assert(size(sortedEdges_) == graph_.CountEdges_
+  assert(size(sortedEdges_) == graph_.getCountEdges()
          && "List of sorted edges by weight contains not all edges");
 }
 

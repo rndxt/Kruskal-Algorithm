@@ -155,13 +155,13 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
   const Graph& graph = data->graph();
   const DisjointSet& dsu = data->dsu();
 
-  for (int vertexId : std::views::keys(graph.AdjLists_)) {
+  for (int vertexId : graph.vertexView()) {
     data_->table.emplace_back(vertexId, dsu.findSet(vertexId));
   }
 
   size_t countVertices = graph.getVerticesCount();
 
-  auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
+  auto v = graph.vertexView() | std::views::enumerate;
   for (auto [i, vertex] : v) {
     double angle = 2 * std::numbers::pi * i / countVertices;
     QPointF center
@@ -172,8 +172,8 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
         DrawData::DrawNode{center, palette_.node_radius, Qt::black, vertex});
   }
 
-  for (const auto& [vertex, outEdges] : graph.AdjLists_) {
-    for (const auto& outEdge : outEdges) {
+  for (auto vertex : graph.vertexView()) {
+    for (const auto& outEdge : graph.adjacent(vertex)) {
       data_->edges[vertex].emplace_back(outEdge.v, outEdge.w, Qt::black);
     }
   }
@@ -188,7 +188,7 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
 
   const Graph& graph = data->graph();
   const DisjointSet& dsu = data->dsu();
-  auto v = graph.AdjLists_ | std::views::keys | std::views::enumerate;
+  auto v = graph.vertexView() | std::views::enumerate;
   for (auto [i, vertexId] : v) {
     assert(data_->table[i].vertex == vertexId);
     data_->table[i].index = dsu.findSet(vertexId);
