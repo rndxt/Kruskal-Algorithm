@@ -3,7 +3,7 @@
 namespace QApp {
 namespace Kernel {
 
-enum class NodeStatus : int { Inactive, Active, END };
+enum class NodeStatus : int { Inactive, Active };
 
 namespace NodeStatusFuncs {
 
@@ -12,7 +12,7 @@ static constexpr int toIndex(NodeStatus status) {
 }
 
 static constexpr int size() {
-  return toIndex(NodeStatus::END);
+  return toIndex(NodeStatus::Active) + 1;
 }
 
 }; // namespace NodeStatusFuncs

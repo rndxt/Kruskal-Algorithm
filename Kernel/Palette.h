@@ -22,7 +22,8 @@ struct Palette {
   QColor nodeCountur(NodeStatus status) const;
 
 private:
-  std::array<QColor, 2> nodeCountur_ = {Qt::black, Qt::gray};
+  std::array<QColor, NodeStatusFuncs::size()> nodeCountur_
+      = {Qt::black, Qt::gray};
   std::array<QColor, EdgeStatusFuncs::size()> edgeCountur_
       = {QColor("orange"), Qt::darkGray, Qt::black};
 };

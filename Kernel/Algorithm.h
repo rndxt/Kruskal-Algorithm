@@ -20,7 +20,7 @@ public:
 
   const Graph& graph() const;
   const DisjointSet& dsu() const;
-  const std::vector<EdgeWithStatus>& edgesWithInfo() const;
+  const std::vector<EdgeWithStatus>& edgesWithStatus() const;
   void doNextStep();
   void replaceModel(const std::vector<std::vector<int>>& newModel);
 

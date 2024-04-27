@@ -15,7 +15,7 @@ const DisjointSet& Algorithm::dsu() const {
   return dsu_;
 }
 
-const std::vector<Algorithm::EdgeWithStatus>& Algorithm::edgesWithInfo() const {
+const std::vector<Algorithm::EdgeWithStatus>& Algorithm::edgesWithStatus() const {
   return sortedEdges_;
 }
 

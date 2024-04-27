@@ -171,8 +171,7 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
         = {palette_.plot_center.x() + palette_.radius * std::cos(angle),
            palette_.plot_center.y() + palette_.radius * std::sin(angle)};
     data_->nodes.emplace(
-        vertex,
-        DrawData::DrawNode{center, palette_.node_radius, Qt::black, vertex});
+        vertex, DrawNode{center, palette_.node_radius, Qt::black, vertex});
   }
 
   for (auto vertex : graph.vertexView()) {
@@ -197,7 +196,7 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
     data_->table[i].index = dsu.find(vertexId);
   }
 
-  const auto& edgesWithStatus = data->edgesWithInfo();
+  const auto& edgesWithStatus = data->edgesWithStatus();
   for (const auto& [edge, status] : edgesWithStatus) {
     auto it
         = std::ranges::find(data_->edges[edge.u], edge.v, &DrawEdge::vertexId);
