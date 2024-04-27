@@ -7,31 +7,6 @@
 namespace QApp {
 namespace Kernel {
 
-Algorithm::Algorithm() {
-  for (int i = 0; i < 6; ++i) {
-    graph_.addVertex(i);
-    dsu_.makeSet(i);
-  }
-
-  std::vector<Edge> edges
-      = {{0, 1, 16}, {0, 2, 28}, {0, 3, 34}, {0, 4, 21}, {0, 5, 45},
-         {1, 2, 18}, {1, 3, 25}, {1, 4, 26}, {1, 5, 27}, {2, 3, 17},
-         {2, 4, 28}, {2, 5, 30}, {3, 4, 19}, {3, 5, 28}, {4, 5, 15}};
-
-  for (auto edge : edges) {
-    graph_.addEdge(edge);
-    sortedEdges_.emplace_back(edge, EdgeStatus::Unknown);
-  }
-
-  std::ranges::sort(
-      sortedEdges_,
-      [](const Edge& lhs, const Edge& rhs) { return lhs.w < rhs.w; },
-      &EdgeWithStatus::edge);
-
-  assert(size(sortedEdges_) == graph_.CountEdges_
-         && "List of sorted edges by weight contains not all edges");
-}
-
 const Graph& Algorithm::graph() const {
   return graph_;
 }
@@ -88,6 +63,36 @@ void Algorithm::replaceModel(const std::vector<std::vector<int>>& newModel) {
       &EdgeWithStatus::edge);
 
   assert(graph_.getCountEdges() == sortedEdges_.size());
+}
+
+Algorithm Algorithm::defaultExample() {
+  std::vector<Edge> edges
+      = {{0, 1, 16}, {0, 2, 28}, {0, 3, 34}, {0, 4, 21}, {0, 5, 45},
+         {1, 2, 18}, {1, 3, 25}, {1, 4, 26}, {1, 5, 27}, {2, 3, 17},
+         {2, 4, 28}, {2, 5, 30}, {3, 4, 19}, {3, 5, 28}, {4, 5, 15}};
+  Algorithm example;
+  example.buildModelByEdges(edges);
+  return example;
+}
+
+void Algorithm::buildModelByEdges(const std::vector<Edge>& edges) {
+  for (int i = 0; i < 6; ++i) {
+    graph_.addVertex(i);
+    dsu_.makeSet(i);
+  }
+
+  for (auto edge : edges) {
+    graph_.addEdge(edge);
+    sortedEdges_.emplace_back(edge, EdgeStatus::Unknown);
+  }
+
+  std::ranges::sort(
+      sortedEdges_,
+      [](const Edge& lhs, const Edge& rhs) { return lhs.w < rhs.w; },
+      &EdgeWithStatus::edge);
+
+  assert(size(sortedEdges_) == graph_.CountEdges_
+         && "List of sorted edges by weight contains not all edges");
 }
 
 } // namespace Kernel

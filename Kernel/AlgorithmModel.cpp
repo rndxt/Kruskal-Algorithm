@@ -6,7 +6,8 @@
 namespace QApp {
 namespace Kernel {
 
-AlgorithmModel::AlgorithmModel() : algorithm_(std::in_place_t()) {}
+AlgorithmModel::AlgorithmModel()
+    : algorithm_(std::in_place_t(), Algorithm::defaultExample()) {}
 
 void AlgorithmModel::subscribe(ObserverAlgorithm* obs) {
   assert(obs);
