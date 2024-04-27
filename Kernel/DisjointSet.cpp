@@ -14,15 +14,15 @@ void DisjointSet::makeSet(Element elem) {
 }
 
 void DisjointSet::join(Element lhs, Element rhs) {
-  Element represenLhs = findSet(lhs);
-  Element represenRhs = findSet(rhs);
+  Element represenLhs = find(lhs);
+  Element represenRhs = find(rhs);
   Sets_[represenLhs] = represenRhs;
   assert(CountSets_ > 1);
   CountSets_ -= (represenLhs != represenRhs);
   assert(CountSets_ > 0);
 }
 
-DisjointSet::Element DisjointSet::findSet(Element elem) const {
+DisjointSet::Element DisjointSet::find(Element elem) const {
   assert(Sets_.contains(elem));
   while (elem != getParent(elem)) {
     elem = getParent(getParent(elem));

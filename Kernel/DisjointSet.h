@@ -13,7 +13,7 @@ public:
 
   void makeSet(Element elem);
   void join(Element lhs, Element rhs);
-  Element findSet(Element elem) const;
+  Element find(Element elem) const;
   int getCountSets() const;
   void clear();
 

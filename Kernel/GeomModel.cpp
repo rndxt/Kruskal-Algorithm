@@ -159,7 +159,7 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
   const DisjointSet& dsu = data->dsu();
 
   for (int vertexId : graph.vertexView()) {
-    data_->table.emplace_back(vertexId, dsu.findSet(vertexId));
+    data_->table.emplace_back(vertexId, dsu.find(vertexId));
   }
 
   size_t countVertices = graph.getVerticesCount();
@@ -194,7 +194,7 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
   auto v = graph.vertexView() | std::views::enumerate;
   for (auto [i, vertexId] : v) {
     assert(data_->table[i].vertex == vertexId);
-    data_->table[i].index = dsu.findSet(vertexId);
+    data_->table[i].index = dsu.find(vertexId);
   }
 
   const auto& edgesWithStatus = data->edgesWithInfo();
