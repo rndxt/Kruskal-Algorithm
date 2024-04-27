@@ -205,6 +205,11 @@ void GeomModel::onNextStepData(AlgorithmData&& data) {
     if (std::exchange(it->contur, newStatus) != newStatus) {
       node_animator_.startAnimation(data_->nodes[edge.u], data_->nodes[edge.v]);
     }
+
+    auto it2
+        = std::ranges::find(data_->edges[edge.v], edge.u, &DrawEdge::vertexId);
+    assert(it2 != end(data_->edges[edge.v]));
+    it2->contur = newStatus;
   }
 
   port_.notify();

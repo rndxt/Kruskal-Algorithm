@@ -48,6 +48,7 @@ public:
   void handleSliderAction(int value);
   void handleReprAction(const std::vector<std::vector<int>>& action);
 
+private:
   void onMousePress_(const QPointF& position);
   void onMouseMove_(const QPointF& position);
   void onMouseRelease_(const QPointF& position);
@@ -56,7 +57,6 @@ public:
   void onAlgorithmData(AlgorithmData&& data);
   void onNextStepData(AlgorithmData&& data);
 
-private:
   int touchedNode_(const QPointF& position) const;
 
   static constexpr int k_non = -1;

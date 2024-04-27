@@ -215,6 +215,7 @@ void View::draw(const DrawData& data) {
 
   for (auto& [id, outEdges] : data.edges) {
     assert(std::ranges::is_sorted(outEdges, {}, &DrawEdge::vertexId));
+    // all edges before already have been drawn
     auto it = std::ranges::lower_bound(outEdges, id, {}, &DrawEdge::vertexId);
     auto v = std::ranges::subrange(it, end(outEdges));
     for (auto& outEdge : v) {
