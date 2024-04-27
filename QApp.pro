@@ -86,6 +86,7 @@ HEADERS += \
   Kernel/Algorithm.h \
   Kernel/GeomModel.h \
   Kernel/MouseAction.h \
+  Kernel/NodeStatus.h \
   Kernel/Palette.h \
   Library/QTimeAnchor.h \
   Library/Random.h \

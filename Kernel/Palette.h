@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EdgeStatus.h"
+#include "NodeStatus.h"
 
 #include <QColor>
 #include <QPointF>
@@ -8,19 +9,6 @@
 
 namespace QApp {
 namespace Kernel {
-
-enum class NodeStatus : int { Inactive, Active, END };
-
-struct NodeStatusF {
-  static constexpr int toIndex(NodeStatus status) {
-    return static_cast<int>(status);
-  }
-  static constexpr int size() {
-    return toIndex(NodeStatus::END);
-  }
-
-  static NodeStatus fromInt(int);
-};
 
 struct Palette {
   QPointF plot_center = {400., 300.};
@@ -35,7 +23,7 @@ struct Palette {
 
 private:
   std::array<QColor, 2> nodeCountur_ = {Qt::black, Qt::gray};
-  std::array<QColor, EdgeStatusF::size()> edgeCountur_
+  std::array<QColor, EdgeStatusFuncs::size()> edgeCountur_
       = {QColor("orange"), Qt::darkGray, Qt::black};
 };
 

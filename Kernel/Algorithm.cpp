@@ -26,7 +26,7 @@ void Algorithm::doNextStep() {
   EdgeWithStatus& e = sortedEdges_[step_++];
   e.status = EdgeStatus::NotInMst;
 
-  if (dsu_.findSet(e.edge.u) != dsu_.findSet(e.edge.v)) {
+  if (dsu_.find(e.edge.u) != dsu_.find(e.edge.v)) {
     dsu_.join(e.edge.u, e.edge.v);
     e.status = EdgeStatus::InMst;
   }
