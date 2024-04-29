@@ -12,10 +12,7 @@ namespace Kernel {
 
 struct Palette {
   QPointF plot_center = {400., 300.};
-  double radius = 100.;
-  double field_width = 3.;
-  QPointF field_origin = {1., 2.};
-
+  double plot_radius = 100.;
   double node_radius = 10;
 
   QColor edgeCountur(EdgeStatus status) const;

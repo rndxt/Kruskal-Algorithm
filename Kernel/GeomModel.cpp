@@ -168,8 +168,8 @@ void GeomModel::onAlgorithmData(AlgorithmData&& data) {
   for (auto [i, vertex] : v) {
     double angle = 2 * std::numbers::pi * i / countVertices;
     QPointF center
-        = {palette_.plot_center.x() + palette_.radius * std::cos(angle),
-           palette_.plot_center.y() + palette_.radius * std::sin(angle)};
+        = {palette_.plot_center.x() + palette_.plot_radius * std::cos(angle),
+           palette_.plot_center.y() + palette_.plot_radius * std::sin(angle)};
     data_->nodes.emplace(
         vertex, DrawNode{center, palette_.node_radius, Qt::black, vertex});
   }
