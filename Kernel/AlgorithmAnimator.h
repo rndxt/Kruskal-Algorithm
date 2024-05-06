@@ -28,7 +28,7 @@ private Q_SLOTS:
   void onTimer();
 
 private:
-  static constexpr milliseconds defaultSpeed = milliseconds{1000};
+  static constexpr milliseconds defaultSpeed{1000};
 
   Action action_;
   milliseconds speed = defaultSpeed;

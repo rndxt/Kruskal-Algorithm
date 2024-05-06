@@ -189,7 +189,7 @@ void View::adjustTable(QTableWidget* table) {
   table->setEditTriggers(QAbstractItemView::NoEditTriggers);
   table->horizontalHeader()->setVisible(false);
   table->setRowCount(2);
-  table->setVerticalHeaderLabels({"Vertex", "index"});
+  table->setVerticalHeaderLabels({"Vertex", "Index"});
   table->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
 
@@ -229,11 +229,12 @@ void View::draw(const DrawData& data) {
 }
 
 void View::drawTable(const DrawTable& table) {
-  table_->setColumnCount(size(table));
-  for (size_t column = 0; auto [vertex, up] : table) {
-    table_->setItem(0, column, new QTableWidgetItem(QString::number(vertex)));
-    table_->setItem(1, column, new QTableWidgetItem(QString::number(up)));
-    column += 1;
+  table_->setColumnCount(ssize(table));
+  for (auto [column, data] : std::views::enumerate(table)) {
+    table_->setItem(0, column,
+                    new QTableWidgetItem(QString::number(data.vertex)));
+    table_->setItem(1, column,
+                    new QTableWidgetItem(QString::number(data.index)));
   }
   table_->resizeColumnsToContents();
 }
@@ -246,7 +247,7 @@ void View::drawNode(const DrawNode& node) {
   plot_item->setShape(path);
   plot_item->setPen(QPen(node.contur, 2));
   if (node.contur == Qt::white)
-    plot_item->setBrush(QBrush(QColor("orange")));
+    plot_item->setBrush(QColor("orange"));
   plot_item.release()->attach(plot_.get());
 
   std::unique_ptr<QwtPlotMarker> marker = std::make_unique<QwtPlotMarker>();
