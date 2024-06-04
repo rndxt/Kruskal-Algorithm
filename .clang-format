@@ -1,0 +1,10 @@
+Language: Cpp
+BasedOnStyle: LLVM
+AllowShortFunctionsOnASingleLine : Empty
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBinaryOperators: All
+PointerAlignment: Left
+SpaceAfterTemplateKeyword: false
+SpacesInContainerLiterals: false
+IncludeBlocks: Regroup
+FixNamespaceComments: True
